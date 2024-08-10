@@ -3,6 +3,7 @@ import 'package:energy_app/models/consumo.dart';
 import 'package:energy_app/widgets/data_divider.dart';
 import 'package:energy_app/widgets/item_consumo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
@@ -104,8 +105,10 @@ class _PageHistoricoState extends State<PageHistorico> {
   }
 
   Future<List<Consumo>> fetchConsumo() async {
+    String base_url = dotenv.env["api"] ?? "";
+
     final response = await http
-        .get(Uri.parse('https://energy-api-hazel.vercel.app/consumos/'));
+        .get(Uri.parse('${base_url}consumos/'));
 
     var data = jsonDecode(response.body.toString());
 
