@@ -9,6 +9,11 @@
 .history
 .svn/
 migrate_working_dir/
+*~
+*.swo
+*.swp
+*.tmp
+*.temp
 
 # IntelliJ related
 *.iml
@@ -21,16 +26,32 @@ migrate_working_dir/
 /ios/Pods/
 /ios/Runner.xcworkspace/
 /ios/Flutter/Flutter.framework/
+/ios/.symlinks/
+/ios/.generated/
+/ios/.dart_tool/
+/ios/Flutter/App.framework/
+/ios/Flutter/engine/
+/ios/.xcconfig/
+/ios/Flutter/.Generated.xcconfig
+/ios/Flutter/Flutter.framework.dSYM/
+/ios/Flutter/App.xcworkspace/
+/ios/Flutter/App.xcframework/
+/ios/Flutter/Debug.xcconfig
+/ios/Flutter/Release.xcconfig
 
 # Android
 /build/
 /gradle/
 /local.properties
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+**/android/.gradle/
+/android/.idea/
+/android/captures/
+/android/.cxx/
+/android/app/build/
+/android/app/intermediates/
+/android/app/debug
+/android/app/profile
+/android/app/release
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -52,3 +73,32 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Windows
+/windows/.dart_tool/
+/windows/.generated/
+/windows/flutter/Debug/
+/windows/flutter/Release/
+/windows/CMakeFiles/
+/windows/cmake-build-debug/
+/windows/flutter/GeneratedPluginRegistrant.obj
+
+# Linux
+/linux/.dart_tool/
+/linux/.generated/
+/linux/flutter/Debug/
+/linux/flutter/Release/
+/linux/build/
+
+# Web
+/web/.dart_tool/
+/web/.generated/
+/web/flutter/Debug/
+/web/flutter/Release/
+/web/.cache/
+
+# VS Code
+#.vscode/
+
+# Pubspec lock
+pubspec.lock
