@@ -24,7 +24,10 @@ class ItemDispositivo extends StatelessWidget {
                 Icons.memory,
                 size: MediaQuery.sizeOf(context).width * 0.3,
               )),
-          Text(dispositivo.nome.toString())
+          Text(
+            dispositivo.nome.toString(),
+            style: Theme.of(context).textTheme.headlineSmall,
+          )
         ],
       ),
     );

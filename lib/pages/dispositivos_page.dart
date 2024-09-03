@@ -58,8 +58,8 @@ class _DispositivosPageState extends State<DispositivosPage> {
               );
             }).toList(),
           ),
-          Expanded(
-              child: GridView.count(
+           itensDispositivo.isNotEmpty ? Expanded(
+              child:GridView.count(
                   crossAxisCount: 2,
                   children: List.generate(itensDispositivo.length, (index) {
                     return Center(
@@ -71,7 +71,7 @@ class _DispositivosPageState extends State<DispositivosPage> {
                                       builder: (context) =>
                                           const PageHistorico()),
                                 )));
-                  })))
+                  }))) : const CircularProgressIndicator()
         ],
       ),
     );

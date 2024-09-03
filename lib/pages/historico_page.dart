@@ -55,6 +55,7 @@ class _PageHistoricoState extends State<PageHistorico> {
     }
 
     return Scaffold(
+      appBar: AppBar(),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.only(top: 16.0),
@@ -113,7 +114,7 @@ class _PageHistoricoState extends State<PageHistorico> {
                         },
                         useStickyGroupSeparators: true,
                         order: GroupedListOrder.DESC,
-                        footer: const Text("Sem mais logs de consumo."),
+                        // footer: const Text("Sem mais logs de consumo."),
                       );
                     }
                   },
