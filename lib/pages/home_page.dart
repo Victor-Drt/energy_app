@@ -1,5 +1,6 @@
 import 'package:energy_app/pages/comparativo_page.dart';
 import 'package:energy_app/pages/dashboard_page.dart';
+import 'package:energy_app/pages/dispositivos_page.dart';
 import 'package:energy_app/pages/historico_page.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     PageDashboard(),
-    PageHistorico(),
+    DispositivosPage(),
+    // PageHistorico(),
     PageComparativo()
   ];
 

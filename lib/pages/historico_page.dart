@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:energy_app/models/consumo.dart';
+import 'package:energy_app/services/consumo_service.dart';
 import 'package:energy_app/widgets/data_divider.dart';
 import 'package:energy_app/widgets/item_consumo.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +24,23 @@ class PageHistorico extends StatefulWidget {
 }
 
 class _PageHistoricoState extends State<PageHistorico> {
-  String dropdownValue = list.first;
-  late Future<Consumo> consumoFuture;
+  late Future<List<Consumo>> _consumoData;
   List<Consumo> itensConsumo = [];
+  List<Consumo> itensConsumoFiltrada = [];
+  String dropdownValue = list.first;
+
+  @override
+  void initState() {
+    super.initState();
+    final consumoService = ConsumoService();
+    _consumoData = consumoService.fetchConsumo().then((data) {
+      setState(() {
+        itensConsumo = data;
+        itensConsumoFiltrada = data;
+      });
+      return data;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +66,13 @@ class _PageHistoricoState extends State<PageHistorico> {
                 onChanged: (String? value) {
                   setState(() {
                     dropdownValue = value!;
+                    itensConsumoFiltrada = itensConsumo
+                        .where(
+                            (e) => e.dispositivoId.toString() == dropdownValue.substring(dropdownValue.length-1))
+                        .toList();
                   });
+                  print(dropdownValue.substring(dropdownValue.length-1 ));
+                  print(itensConsumoFiltrada.length);
                 },
                 items: list.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
@@ -61,64 +82,47 @@ class _PageHistoricoState extends State<PageHistorico> {
                 }).toList(),
               ),
               Expanded(
-                  child: FutureBuilder(
-                future: fetchConsumo(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    var newFormat = DateFormat("dd-MM-yy");
-                    var hourFormat = DateFormat("HH:mm:ss");
+                child: FutureBuilder<List<Consumo>>(
+                  future: _consumoData,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Erro: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(
+                          child: Text('Nenhum dado disponível'));
+                    } else {
+                      var newFormat = DateFormat("dd-MM-yy");
+                      var hourFormat = DateFormat("HH:mm:ss");
 
-                    return GroupedListView<dynamic, String>(
-                      elements: itensConsumo,
-                      groupBy: (element) =>
-                          newFormat.format(DateTime.parse(element.createdAt)),
-                      groupSeparatorBuilder: (String groupByValue) =>
-                          DateDivider(
-                        textDate: groupByValue,
-                      ),
-                      itemBuilder: (context, dynamic element) => ItemConsumo(
-                        element: element,
-                        hourFormat: hourFormat,
-                      ),
-                      groupComparator: (value1, value2) {
-                        
-                        var dt1 = newFormat.parse(value1);
-                        var dt2 = newFormat.parse(value2);
-                        return dt1.compareTo(dt2);
-                      },
-                      useStickyGroupSeparators: true, // optional
-                      // floatingHeader: true, // optional
-                      order: GroupedListOrder.DESC, // optional
-                      footer: const Text("Sem mais logs de consumo."), // optional
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('${snapshot.error}');
-                  }
-                  return const Center(child: CircularProgressIndicator());
-                },
-              )),
+                      return GroupedListView<dynamic, String>(
+                        elements: itensConsumoFiltrada,
+                        groupBy: (element) => newFormat
+                            .format(DateTime.parse(element.createdAt ?? '')),
+                        groupSeparatorBuilder: (String groupByValue) =>
+                            DateDivider(textDate: groupByValue),
+                        itemBuilder: (context, dynamic element) => ItemConsumo(
+                          element: element,
+                          hourFormat: hourFormat,
+                        ),
+                        groupComparator: (value1, value2) {
+                          var dt1 = newFormat.parse(value1);
+                          var dt2 = newFormat.parse(value2);
+                          return dt1.compareTo(dt2);
+                        },
+                        useStickyGroupSeparators: true,
+                        order: GroupedListOrder.DESC,
+                        footer: const Text("Sem mais logs de consumo."),
+                      );
+                    }
+                  },
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  Future<List<Consumo>> fetchConsumo() async {
-    String base_url = dotenv.env["api"] ?? "";
-
-    final response = await http
-        .get(Uri.parse('${base_url}consumos/'));
-
-    var data = jsonDecode(response.body.toString());
-
-    if (response.statusCode == 200) {
-      for (Map<String, dynamic> index in data) {
-        itensConsumo.add(Consumo.fromJson(index));
-      }
-      return itensConsumo;
-    } else {
-      throw itensConsumo;
-    }
   }
 }
