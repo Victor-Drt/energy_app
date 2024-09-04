@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:energy_app/models/consumo.dart';
+import 'package:energy_app/models/dispositivo.dart';
 import 'package:energy_app/services/consumo_service.dart';
 import 'package:energy_app/widgets/data_divider.dart';
 import 'package:energy_app/widgets/item_consumo.dart';
@@ -68,11 +69,12 @@ class _PageHistoricoState extends State<PageHistorico> {
                   setState(() {
                     dropdownValue = value!;
                     itensConsumoFiltrada = itensConsumo
-                        .where(
-                            (e) => e.dispositivoId.toString() == dropdownValue.substring(dropdownValue.length-1))
+                        .where((e) =>
+                            e.dispositivoId.toString() ==
+                            dropdownValue.substring(dropdownValue.length - 1))
                         .toList();
                   });
-                  print(dropdownValue.substring(dropdownValue.length-1 ));
+                  print(dropdownValue.substring(dropdownValue.length - 1));
                   print(itensConsumoFiltrada.length);
                 },
                 items: list.map<DropdownMenuItem<String>>((String value) {

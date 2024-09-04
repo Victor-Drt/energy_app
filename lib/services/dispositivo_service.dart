@@ -10,7 +10,7 @@ class DispositivoService {
       : baseUrl = baseUrl ?? dotenv.env["api"] ?? "";
 
   Future<List<Dispositivo>> fetchDispositivo() async {
-    final url = Uri.parse('${baseUrl}dispositivos');
+    final url = Uri.parse('${baseUrl}dispositivos/');
 
     try {
       final response = await http.get(url);
