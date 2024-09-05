@@ -10,15 +10,19 @@ import 'package:http/http.dart' as http;
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 
-const List<String> list = <String>[
-  'Bloco-01',
-  'Bloco-02',
-  'Bloco-03',
-  'Bloco-04'
-];
+// const List<String> list = <String>[
+//   'Bloco-01',
+//   'Bloco-02',
+//   'Bloco-03',
+//   'Bloco-04'
+// ];
 
 class PageHistorico extends StatefulWidget {
-  const PageHistorico({super.key});
+  const PageHistorico(
+      {super.key, required this.dispositivos, required this.dispositovId});
+
+  final List<Dispositivo> dispositivos;
+  final int dispositovId;
 
   @override
   State<PageHistorico> createState() => _PageHistoricoState();
@@ -28,13 +32,16 @@ class _PageHistoricoState extends State<PageHistorico> {
   late Future<List<Consumo>> _consumoData;
   List<Consumo> itensConsumo = [];
   List<Consumo> itensConsumoFiltrada = [];
-  String dropdownValue = list.first;
+  String? dropdownValue = null;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     final consumoService = ConsumoService();
-    _consumoData = consumoService.fetchConsumo().then((data) {
+    _consumoData = consumoService
+        .fetchConsumoByDispositivo(widget.dispositovId.toInt())
+        .then((data) {
       setState(() {
         itensConsumo = data;
         itensConsumoFiltrada = data;
@@ -63,26 +70,51 @@ class _PageHistoricoState extends State<PageHistorico> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              DropdownButton<String>(
-                value: dropdownValue,
-                onChanged: (String? value) {
-                  setState(() {
-                    dropdownValue = value!;
-                    itensConsumoFiltrada = itensConsumo
-                        .where((e) =>
-                            e.dispositivoId.toString() ==
-                            dropdownValue.substring(dropdownValue.length - 1))
-                        .toList();
-                  });
-                  print(dropdownValue.substring(dropdownValue.length - 1));
-                  print(itensConsumoFiltrada.length);
-                },
-                items: list.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
+              Container(
+                margin: const EdgeInsets.fromLTRB(6, 16, 6, 32),
+                width: MediaQuery.sizeOf(context).width * 0.8,
+                padding: const EdgeInsets.all(6.0),
+                decoration: const BoxDecoration(
+                    color: Color.fromRGBO(239, 249, 244, 1.0),
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                child: DropdownButton<String>(
+                  alignment: Alignment.center,
+                  style: Theme.of(context).textTheme.headlineLarge,
+                  hint: Text("Escolha o Disp..."),
+                  value: dropdownValue,
+                  icon: const Icon(
+                    Icons.filter_alt_outlined,
+                  ),
+                  onChanged: (String? value) {
+                    setState(() {
+                      dropdownValue = value!;
+                      if (dropdownValue != null) {
+                        var consumoService = ConsumoService();
+                        _consumoData = consumoService
+                            .fetchConsumoByDispositivo(
+                                int.parse(dropdownValue!))
+                            .then((data) {
+                          setState(() {
+                            itensConsumoFiltrada = data;
+                            itensConsumo = data;
+                          });
+                          return data;
+                        });
+                        itensConsumoFiltrada = itensConsumo
+                            .where((e) =>
+                                e.dispositivoId.toString() == dropdownValue)
+                            .toList();
+                      }
+                    });
+                  },
+                  items: widget.dispositivos
+                      .map<DropdownMenuItem<String>>((Dispositivo value) {
+                    return DropdownMenuItem<String>(
+                      value: value.id.toString(),
+                      child: Text(value.nome.toString()),
+                    );
+                  }).toList(),
+                ),
               ),
               Expanded(
                 child: FutureBuilder<List<Consumo>>(

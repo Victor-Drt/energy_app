@@ -6,8 +6,6 @@ import 'package:energy_app/services/dispositivo_service.dart';
 import 'package:energy_app/widgets/item_dispositivo.dart';
 import 'package:flutter/material.dart';
 
-// List<String> list = <String>['Bloco-01', 'Bloco-02', 'Bloco-03', 'Bloco-04'];
-
 class DispositivosPage extends StatefulWidget {
   const DispositivosPage({super.key});
 
@@ -21,7 +19,7 @@ class _DispositivosPageState extends State<DispositivosPage> {
   List<Dispositivo> itensDispositivo = [];
   List<Bloco> blocos = [];
   List<Dispositivo> itensDispositivoFiltrado = [];
-  String? dropdownValue = null;
+  String? dropdownValue;
   bool isLoading = true;
 
   @override
@@ -39,7 +37,6 @@ class _DispositivosPageState extends State<DispositivosPage> {
 
     _dispositivosData = dispositivoService.fetchDispositivo().then((data) {
       setState(() {
-        // dropdownValue = blocoNames.first;
         itensDispositivo = data;
         itensDispositivoFiltrado = data;
         isLoading = false;
@@ -65,9 +62,11 @@ class _DispositivosPageState extends State<DispositivosPage> {
                     child: DropdownButton<String>(
                       alignment: Alignment.center,
                       style: Theme.of(context).textTheme.headlineLarge,
-                      hint: Text("Escolha o Bloco"),
+                      hint: const Text("Escolha o Bloco"),
                       value: dropdownValue,
-                      icon: const Icon(Icons.filter_alt_outlined,),
+                      icon: const Icon(
+                        Icons.filter_alt_outlined,
+                      ),
                       onChanged: (String? value) {
                         setState(() {
                           dropdownValue = value!;
@@ -84,7 +83,9 @@ class _DispositivosPageState extends State<DispositivosPage> {
                         return DropdownMenuItem<String>(
                           alignment: Alignment.center,
                           value: value.id.toString(),
-                          child: Text(value.nome.toString(),),
+                          child: Text(
+                            value.nome.toString(),
+                          ),
                         );
                       }).toList(),
                     ),
@@ -102,7 +103,15 @@ class _DispositivosPageState extends State<DispositivosPage> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const PageHistorico()),
+                                                  PageHistorico(
+                                                    dispositivos:
+                                                        itensDispositivo,
+                                                    dispositovId:
+                                                        itensDispositivoFiltrado[
+                                                                index]
+                                                            .id!
+                                                            .toInt(),
+                                                  )),
                                         )));
                           })))
                 ],
