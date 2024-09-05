@@ -21,6 +21,7 @@ class _DispositivosPageState extends State<DispositivosPage> {
   List<Dispositivo> itensDispositivoFiltrado = [];
   String? dropdownValue;
   bool isLoading = true;
+  bool showErrorBar = false;
 
   @override
   void initState() {
@@ -28,21 +29,27 @@ class _DispositivosPageState extends State<DispositivosPage> {
     final dispositivoService = DispositivoService();
     final blocoService = BlocoService();
 
-    _blocosData = blocoService.fetchBloco().then((b) {
-      setState(() {
-        blocos = b;
+    try {
+      _blocosData = blocoService.fetchBloco().then((b) {
+        setState(() {
+          blocos = b;
+        });
+        return b;
       });
-      return b;
-    });
 
-    _dispositivosData = dispositivoService.fetchDispositivo().then((data) {
-      setState(() {
-        itensDispositivo = data;
-        itensDispositivoFiltrado = data;
-        isLoading = false;
+      _dispositivosData = dispositivoService.fetchDispositivo().then((data) {
+        setState(() {
+          itensDispositivo = data;
+          itensDispositivoFiltrado = data;
+          isLoading = false;
+        });
+        return data;
       });
-      return data;
-    });
+    } catch (e) {
+      setState(() {
+        showErrorBar = true;
+      });
+    }
   }
 
   @override
@@ -113,9 +120,11 @@ class _DispositivosPageState extends State<DispositivosPage> {
                                                             .toInt(),
                                                   )),
                                         )));
-                          })))
+                          }))),
+                  if (showErrorBar) Text("Erro de rede")
                 ],
               )
             : const CircularProgressIndicator());
+            
   }
 }

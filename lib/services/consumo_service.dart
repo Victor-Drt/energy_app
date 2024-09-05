@@ -34,7 +34,7 @@ class ConsumoService {
     }
   }
 
-    Future<List<Consumo>> fetchConsumoByDispositivo(int dispositivoId) async {
+  Future<List<Consumo>> fetchConsumoByDispositivo(int dispositivoId) async {
     final url = Uri.parse('${baseUrl}consumos/dispositivo/$dispositivoId/');
 
     try {
@@ -57,5 +57,4 @@ class ConsumoService {
       throw Exception('Erro de rede: $e');
     }
   }
-
 }
