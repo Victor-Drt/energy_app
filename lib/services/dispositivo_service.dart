@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io'; // Import para capturar erros de rede
 import 'package:energy_app/models/dispositivo.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -25,8 +26,14 @@ class DispositivoService {
         throw Exception(
             'Falha ao carregar dados de dispositivo: ${response.reasonPhrase}');
       }
+    } on SocketException {
+      // Caso não haja conexão com a internet, capturamos a exceção SocketException
+      print('Sem conexão com a Internet');
+      return []; // Retorna uma lista vazia ou trate conforme necessário
     } catch (e) {
-      throw Exception('Erro de rede: $e');
+      // Outros tipos de erros (por exemplo, erro no servidor ou erro de parse)
+      print('Erro inesperado: $e');
+      return [];
     }
   }
 }

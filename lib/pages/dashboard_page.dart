@@ -40,7 +40,7 @@ class _PageDashboardState extends State<PageDashboard> {
                       decoration: const BoxDecoration(
                           color: Colors.white10,
                           borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Image.network(src),
+                      child: Text("Vai ter grafico de linha aqui"),
                     ),
                     Container(
                       margin: const EdgeInsets.fromLTRB(0, 40, 0, 30),
@@ -117,10 +117,7 @@ class _PageDashboardState extends State<PageDashboard> {
                               color: Colors.white,
                               borderRadius:
                                   BorderRadius.vertical(top: Radius.circular(20))),
-                          child: Image.network(
-                            src2,
-                            fit: BoxFit.fitWidth,
-                          ),
+                          child: Text("Vai ter um grafico pizza aqui"),
                         )
                       ]),
                     )
