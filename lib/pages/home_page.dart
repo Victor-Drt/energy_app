@@ -19,7 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Color corPrincipal = const Color.fromRGBO(60, 184, 120, 100);
 
   int _selectedIndex = 0;
-  static const List<Widget> _widgetOptions = <Widget>[
+  static List<Widget> _widgetOptions = <Widget>[
     PageDashboard(),
     DispositivosPage(),
     PageComparativo()
@@ -34,7 +34,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),

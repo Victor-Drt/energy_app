@@ -58,86 +58,89 @@ class _DispositivosPageState extends State<DispositivosPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: !isLoading
-            ? blocos.isNotEmpty
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(6, 16, 6, 32),
-                        width: MediaQuery.sizeOf(context).width * 0.8,
-                        padding: const EdgeInsets.all(6.0),
-                        decoration: const BoxDecoration(
-                            color: Color.fromRGBO(239, 249, 244, 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          alignment: AlignmentDirectional.center,
-                          style: estiloTextoDropdown,
-                          hint: Text("Escolha o Bloco",
-                              textAlign: TextAlign.center,
-                              style: estiloTextoDropdown),
-                          value: dropdownValue,
-                          icon: const Icon(
-                            Icons.filter_alt_outlined,
+    return Scaffold(
+      appBar: AppBar(title: Text("Dispositivos"),),
+      body: Center(
+          child: !isLoading
+              ? blocos.isNotEmpty
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(6, 16, 6, 32),
+                          width: MediaQuery.sizeOf(context).width * 0.8,
+                          padding: const EdgeInsets.all(6.0),
+                          decoration: const BoxDecoration(
+                              color: Color.fromRGBO(239, 249, 244, 1.0),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20))),
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            alignment: AlignmentDirectional.center,
+                            style: estiloTextoDropdown,
+                            hint: Text("Escolha o Bloco",
+                                textAlign: TextAlign.center,
+                                style: estiloTextoDropdown),
+                            value: dropdownValue,
+                            icon: const Icon(
+                              Icons.filter_alt_outlined,
+                            ),
+                            onChanged: (String? value) {
+                              setState(() {
+                                dropdownValue = value!;
+                                if (dropdownValue != null) {
+                                  itensDispositivoFiltrado = itensDispositivo
+                                      .where((e) =>
+                                          e.blocoId.toString() == dropdownValue)
+                                      .toList();
+                                }
+                              });
+                            },
+                            items: blocos
+                                .map<DropdownMenuItem<String>>((Bloco value) {
+                              return DropdownMenuItem<String>(
+                                alignment: Alignment.center,
+                                value: value.id.toString(),
+                                child: Text(
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                  value.nome.toString(),
+                                ),
+                              );
+                            }).toList(),
                           ),
-                          onChanged: (String? value) {
-                            setState(() {
-                              dropdownValue = value!;
-                              if (dropdownValue != null) {
-                                itensDispositivoFiltrado = itensDispositivo
-                                    .where((e) =>
-                                        e.blocoId.toString() == dropdownValue)
-                                    .toList();
-                              }
-                            });
-                          },
-                          items: blocos
-                              .map<DropdownMenuItem<String>>((Bloco value) {
-                            return DropdownMenuItem<String>(
-                              alignment: Alignment.center,
-                              value: value.id.toString(),
-                              child: Text(
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
-                                value.nome.toString(),
-                              ),
-                            );
-                          }).toList(),
                         ),
-                      ),
-                      Expanded(
-                          child: GridView.count(
-                              crossAxisCount: 2,
-                              children: List.generate(
-                                  itensDispositivoFiltrado.length, (index) {
-                                return Center(
-                                    child: ItemDispositivo(
-                                        dispositivo:
-                                            itensDispositivoFiltrado[index],
-                                        quandoClicar: () => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PageHistorico(
-                                                        dispositivos:
-                                                            itensDispositivo,
-                                                        dispositovId:
-                                                            itensDispositivoFiltrado[
-                                                                    index]
-                                                                .id!
-                                                                .toInt(),
-                                                      )),
-                                            )));
-                              }))),
-                      if (showErrorBar) Text("Erro de rede")
-                    ],
-                  )
-                : const ErrorConection()
-            : const CircularProgressIndicator());
+                        Expanded(
+                            child: GridView.count(
+                                crossAxisCount: 2,
+                                children: List.generate(
+                                    itensDispositivoFiltrado.length, (index) {
+                                  return Center(
+                                      child: ItemDispositivo(
+                                          dispositivo:
+                                              itensDispositivoFiltrado[index],
+                                          quandoClicar: () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PageHistorico(
+                                                          dispositivos:
+                                                              itensDispositivo,
+                                                          dispositovId:
+                                                              itensDispositivoFiltrado[
+                                                                      index]
+                                                                  .id!
+                                                                  .toInt(),
+                                                        )),
+                                              )));
+                                }))),
+                        if (showErrorBar) Text("Erro de rede")
+                      ],
+                    )
+                  : const ErrorConection()
+              : const CircularProgressIndicator()),
+    );
   }
 }
