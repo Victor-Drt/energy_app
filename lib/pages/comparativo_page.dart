@@ -103,9 +103,6 @@ class _PageComparativoState extends State<PageComparativo> {
         ));
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Comparativo"),
-      ),
       body: Center(
           child: ListView(
         children: [periodoDados, graphLinha, graphBloco, graphLinha2],

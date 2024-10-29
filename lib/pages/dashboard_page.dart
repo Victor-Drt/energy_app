@@ -48,9 +48,6 @@ class _PageDashboardState extends State<PageDashboard> {
     );
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Dashboard"),
-        ),
         body: ListView(
           children: [graphBloco, graphLinha, graphPizza],
         ));

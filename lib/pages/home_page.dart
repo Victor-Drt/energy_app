@@ -19,6 +19,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Color corPrincipal = const Color.fromRGBO(60, 184, 120, 100);
 
   int _selectedIndex = 0;
+  String appBarTitle = "Dashboard";
+
   static List<Widget> _widgetOptions = <Widget>[
     PageDashboard(),
     DispositivosPage(),
@@ -28,35 +30,98 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+
+      if (_selectedIndex == 0) appBarTitle = "Dashboard";
+      if (_selectedIndex == 1) appBarTitle = "Dispositivos";
+      if (_selectedIndex == 2) appBarTitle = "Comparativo";
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isWideScreen = MediaQuery.sizeOf(context).width > 460;
+
     return Scaffold(
+      appBar: AppBar(
+        title: Text(appBarTitle),
+        leading: isWideScreen
+            ? Builder(
+                builder: (context) {
+                  return IconButton(
+                    icon: const Icon(Icons.menu),
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                  );
+                },
+              )
+            : null,
+      ),
+      drawer: isWideScreen
+          ? Drawer(
+              child: Column(
+              children: [
+                ListTile(
+                  title: const Row(
+                    children: [
+                      Icon(Icons.bar_chart_outlined),
+                      Text("Dashboard")
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _onItemTapped(0);
+                  },
+                ),
+                ListTile(
+                  title: const Row(
+                    children: [Icon(Icons.history), Text("Dispositivos")],
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _onItemTapped(1);
+                  },
+                ),
+                ListTile(
+                  title: const Row(
+                    children: [
+                      Icon(Icons.compare_arrows_outlined),
+                      Text("Comparativo")
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _onItemTapped(2);
+                  },
+                )
+              ],
+            ))
+          : null,
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart_outlined),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.memory),
-            label: 'Dispositivos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.compare_arrows),
-            label: 'Comparativo',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: corPrincipal,
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-      ),
+      bottomNavigationBar: isWideScreen
+          ? null
+          : BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.bar_chart_outlined),
+                  label: 'Dashboard',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.memory),
+                  label: 'Dispositivos',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.compare_arrows),
+                  label: 'Comparativo',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              selectedItemColor: corPrincipal,
+              unselectedItemColor: Colors.grey,
+              onTap: _onItemTapped,
+            ),
     );
   }
 }

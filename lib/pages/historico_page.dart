@@ -55,7 +55,6 @@ class _PageHistoricoState extends State<PageHistorico> {
     }
 
     return Scaffold(
-      appBar: AppBar(),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.only(top: 16.0),

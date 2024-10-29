@@ -59,7 +59,6 @@ class _DispositivosPageState extends State<DispositivosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Dispositivos"),),
       body: Center(
           child: !isLoading
               ? blocos.isNotEmpty
@@ -117,8 +116,9 @@ class _DispositivosPageState extends State<DispositivosPage> {
                                 crossAxisCount: 2,
                                 children: List.generate(
                                     itensDispositivoFiltrado.length, (index) {
-                                  return Center(
-                                      child: ItemDispositivo(
+                                  return 
+                                  // Center(child: 
+                                      ItemDispositivo(
                                           dispositivo:
                                               itensDispositivoFiltrado[index],
                                           quandoClicar: () => Navigator.push(
@@ -134,7 +134,8 @@ class _DispositivosPageState extends State<DispositivosPage> {
                                                                   .id!
                                                                   .toInt(),
                                                         )),
-                                              )));
+                                              ));
+                                  // );
                                 }))),
                         if (showErrorBar) Text("Erro de rede")
                       ],
