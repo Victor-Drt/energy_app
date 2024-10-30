@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license
 // that can be found in the LICENSE file.
 import 'package:energy_app/pages/home_page.dart';
+import 'package:energy_app/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
       ),
       home: const MyHomePage(title: 'Dashboard'),
+      // home: const LoginPage(),
     );
   }
 }
