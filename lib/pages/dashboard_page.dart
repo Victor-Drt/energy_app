@@ -14,6 +14,7 @@ class PageDashboard extends StatefulWidget {
 class _PageDashboardState extends State<PageDashboard> {
   @override
   Widget build(BuildContext context) {
+    
     Widget cardResumoConsumo() {
       return Container(
           alignment: Alignment.center,

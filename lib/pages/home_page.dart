@@ -1,3 +1,4 @@
+import 'package:energy_app/pages/ambientes_page.dart';
 import 'package:energy_app/pages/comparativo_page.dart';
 import 'package:energy_app/pages/dashboard_page.dart';
 import 'package:energy_app/pages/dispositivos_page.dart';
@@ -23,8 +24,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static List<Widget> _widgetOptions = <Widget>[
     PageDashboard(),
+    AmbientesPage(),
     DispositivosPage(),
-    PageComparativo()
+    PageComparativo(),
   ];
 
   void _onItemTapped(int index) {
@@ -32,8 +34,9 @@ class _MyHomePageState extends State<MyHomePage> {
       _selectedIndex = index;
 
       if (_selectedIndex == 0) appBarTitle = "Dashboard";
-      if (_selectedIndex == 1) appBarTitle = "Dispositivos";
-      if (_selectedIndex == 2) appBarTitle = "Comparativo";
+      if (_selectedIndex == 1) appBarTitle = "Ambientes";
+      if (_selectedIndex == 2) appBarTitle = "Dispositivos";
+      if (_selectedIndex == 3) appBarTitle = "Comparativo";
     });
   }
 
@@ -93,6 +96,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.pop(context);
                     _onItemTapped(2);
                   },
+                ),
+                ListTile(
+                  title: const Row(
+                    children: [
+                      Icon(Icons.roofing),
+                      Text("Ambientes")
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _onItemTapped(3);
+                  },
                 )
               ],
             ))
@@ -107,6 +122,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.bar_chart_outlined),
                   label: 'Dashboard',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.roofing),
+                  label: 'Ambientes',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.memory),
