@@ -14,7 +14,6 @@ class PageDashboard extends StatefulWidget {
 class _PageDashboardState extends State<PageDashboard> {
   @override
   Widget build(BuildContext context) {
-    
     Widget cardResumoConsumo() {
       return Container(
           alignment: Alignment.center,
@@ -111,9 +110,18 @@ class _PageDashboardState extends State<PageDashboard> {
       width: MediaQuery.sizeOf(context).width * 0.90,
       height: MediaQuery.sizeOf(context).height * 0.40,
       margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-      decoration: const BoxDecoration(
-          color: Color.fromRGBO(239, 249, 244, 1.0),
-          borderRadius: BorderRadius.all(Radius.circular(20))),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
       child: BarChartDashboard(title: "Consumo p/ Ambiente", data: [
         {"hoje": 75.00, "semana": 90.00, "mes": 150.00}
       ]),

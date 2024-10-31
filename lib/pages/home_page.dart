@@ -17,7 +17,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Color corPrincipal = const Color.fromRGBO(60, 184, 120, 100);
+  Color corPrincipal = Colors.white;
 
   int _selectedIndex = 0;
   String appBarTitle = "Dashboard";
@@ -46,7 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(appBarTitle),
+        backgroundColor: Color.fromRGBO(114, 187, 57, 1),
+        title: Text(appBarTitle, style: TextStyle(color: Colors.white),),
         leading: isWideScreen
             ? Builder(
                 builder: (context) {
@@ -76,13 +77,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     _onItemTapped(0);
                   },
                 ),
+                                ListTile(
+                  title: const Row(
+                    children: [
+                      Icon(Icons.roofing),
+                      Text("Ambientes")
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _onItemTapped(1);
+                  },
+                ),
                 ListTile(
                   title: const Row(
                     children: [Icon(Icons.history), Text("Dispositivos")],
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    _onItemTapped(1);
+                    _onItemTapped(2);
                   },
                 ),
                 ListTile(
@@ -94,21 +107,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    _onItemTapped(2);
-                  },
-                ),
-                ListTile(
-                  title: const Row(
-                    children: [
-                      Icon(Icons.roofing),
-                      Text("Ambientes")
-                    ],
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
                     _onItemTapped(3);
                   },
-                )
+                ),
               ],
             ))
           : null,
@@ -117,7 +118,10 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       bottomNavigationBar: isWideScreen
           ? null
-          : BottomNavigationBar(
+          : Theme(data: Theme.of(context).copyWith(
+            canvasColor: Color.fromRGBO(114, 187, 57, 1),
+            primaryColor: Colors.white,
+          ), child: BottomNavigationBar(
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                   icon: Icon(Icons.bar_chart_outlined),
@@ -138,9 +142,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
               currentIndex: _selectedIndex,
               selectedItemColor: corPrincipal,
-              unselectedItemColor: Colors.grey,
+              unselectedItemColor: Colors.white,
               onTap: _onItemTapped,
-            ),
+            )),
     );
   }
 }

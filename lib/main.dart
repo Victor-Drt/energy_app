@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      color: Colors.green.shade400,
+      color: Color.fromRGBO(114, 187, 57, 1),
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
