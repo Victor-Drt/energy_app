@@ -23,16 +23,18 @@ class _PageHistoricoState extends State<PageHistorico> {
   late Future<List<Consumo>> _consumoData;
   List<Consumo> itensConsumo = [];
   List<Consumo> itensConsumoFiltrada = [];
-  String? dropdownValue = null;
+  String? dropdownValue;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _carregarConsumo(widget.dispositovId);
+  }
+
+  void _carregarConsumo(int dispositivoId) {
     final consumoService = ConsumoService();
-    _consumoData = consumoService
-        .fetchConsumoByDispositivo(widget.dispositovId.toInt())
-        .then((data) {
+    _consumoData = consumoService.fetchConsumoByDispositivo(dispositivoId).then((data) {
       setState(() {
         itensConsumo = data;
         itensConsumoFiltrada = data;
@@ -44,16 +46,6 @@ class _PageHistoricoState extends State<PageHistorico> {
 
   @override
   Widget build(BuildContext context) {
-    Map<DateTime, List<Map<String, dynamic>>> groupedItems = {};
-    for (var item in itensConsumo) {
-      DateTime mDate = DateTime.parse(item.createdAt!);
-      DateTime date = DateTime(mDate.year, mDate.month, mDate.day);
-      if (groupedItems[date] == null) {
-        groupedItems[date] = [];
-      }
-      groupedItems[date]!.add(item.toJson());
-    }
-
     return Scaffold(
       body: Center(
         child: Padding(
@@ -69,52 +61,34 @@ class _PageHistoricoState extends State<PageHistorico> {
                           padding: const EdgeInsets.all(6.0),
                           decoration: const BoxDecoration(
                               color: Color.fromRGBO(239, 249, 244, 1.0),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20))),
+                              borderRadius: BorderRadius.all(Radius.circular(20))),
                           child: DropdownButton<String>(
                             isExpanded: true,
                             alignment: Alignment.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold),
-                            // style: Theme.of(context).textTheme.headlineLarge,
-                            hint: Text("Escolha o Dispositivo"),
+                            hint: const Text("Escolha o Dispositivo"),
                             value: dropdownValue,
-                            icon: const Icon(
-                              Icons.filter_alt_outlined,
-                            ),
+                            icon: const Icon(Icons.filter_alt_outlined),
                             onChanged: (String? value) {
                               setState(() {
-                                dropdownValue = value!;
+                                dropdownValue = value;
                                 if (dropdownValue != null) {
-                                  var consumoService = ConsumoService();
-                                  _consumoData = consumoService
-                                      .fetchConsumoByDispositivo(
-                                          int.parse(dropdownValue!))
-                                      .then((data) {
-                                    setState(() {
-                                      itensConsumoFiltrada = data;
-                                      itensConsumo = data;
-                                    });
-                                    return data;
-                                  });
+                                  int dispositivoId = int.parse(dropdownValue!);
+                                  _carregarConsumo(dispositivoId);
                                   itensConsumoFiltrada = itensConsumo
-                                      .where((e) =>
-                                          e.dispositivoId.toString() ==
-                                          dropdownValue)
+                                      .where((e) => e.dispositivoId.toString() == dropdownValue)
                                       .toList();
                                 }
                               });
                             },
-                            items: widget.dispositivos
-                                .map<DropdownMenuItem<String>>(
-                                    (Dispositivo value) {
+                            items: widget.dispositivos.map<DropdownMenuItem<String>>((Dispositivo value) {
                               return DropdownMenuItem<String>(
                                 alignment: Alignment.center,
                                 value: value.id.toString(),
                                 child: Text(
-                                  textAlign: TextAlign.center,
-                                  value.nome.toString(),
-                                  style: TextStyle(
+                                  value.descricao ?? "Dispositivo ${value.id}",
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black),
@@ -127,17 +101,12 @@ class _PageHistoricoState extends State<PageHistorico> {
                           child: FutureBuilder<List<Consumo>>(
                             future: _consumoData,
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Center(child: CircularProgressIndicator());
                               } else if (snapshot.hasError) {
-                                return Center(
-                                    child: Text('Erro: ${snapshot.error}'));
-                              } else if (!snapshot.hasData ||
-                                  snapshot.data!.isEmpty) {
-                                return const Center(
-                                    child: Text('Nenhum dado disponível'));
+                                return Center(child: Text('Erro: ${snapshot.error}'));
+                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return const Center(child: Text('Nenhum dado disponível'));
                               } else {
                                 var newFormat = DateFormat("dd-MM-yy");
                                 var hourFormat = DateFormat("HH:mm:ss");
@@ -146,11 +115,9 @@ class _PageHistoricoState extends State<PageHistorico> {
                                   elements: itensConsumoFiltrada,
                                   groupBy: (element) => newFormat.format(
                                       DateTime.parse(element.createdAt ?? '')),
-                                  groupSeparatorBuilder:
-                                      (String groupByValue) =>
-                                          DateDivider(textDate: groupByValue),
-                                  itemBuilder: (context, dynamic element) =>
-                                      ItemConsumo(
+                                  groupSeparatorBuilder: (String groupByValue) =>
+                                      DateDivider(textDate: groupByValue),
+                                  itemBuilder: (context, dynamic element) => ItemConsumo(
                                     element: element,
                                     hourFormat: hourFormat,
                                   ),
@@ -161,7 +128,6 @@ class _PageHistoricoState extends State<PageHistorico> {
                                   },
                                   useStickyGroupSeparators: true,
                                   order: GroupedListOrder.DESC,
-                                  // footer: const Text("Sem mais logs de consumo."),
                                 );
                               }
                             },

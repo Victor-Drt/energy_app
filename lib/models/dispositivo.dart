@@ -1,28 +1,36 @@
 class Dispositivo {
-  int? id;
-  String? nome;
-  int? blocoId;
-  String? createdAt;
-  String? updatedAt;
+  String? id;
+  String? ambienteId;
+  String? macAddress;
+  bool? status;
+  String? descricao;
+  String? dataAtivacao;
 
   Dispositivo(
-      {this.id, this.nome, this.blocoId, this.createdAt, this.updatedAt});
+      {this.id,
+      this.ambienteId,
+      this.macAddress,
+      this.status,
+      this.descricao,
+      this.dataAtivacao});
 
   Dispositivo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    nome = json['nome'];
-    blocoId = json['blocoId'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
+    ambienteId = json['ambienteId'];
+    macAddress = json['macAddress'];
+    status = json['status'];
+    descricao = json['descricao'];
+    dataAtivacao = json['dataAtivacao'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['nome'] = this.nome;
-    data['blocoId'] = this.blocoId;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
+    data['ambienteId'] = this.ambienteId;
+    data['macAddress'] = this.macAddress;
+    data['status'] = this.status;
+    data['descricao'] = this.descricao;
+    data['dataAtivacao'] = this.dataAtivacao;
     return data;
   }
 }

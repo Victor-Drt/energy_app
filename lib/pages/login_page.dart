@@ -1,8 +1,7 @@
-import 'package:energy_app/pages/dashboard_page.dart';
 import 'package:energy_app/pages/home_page.dart';
 import 'package:energy_app/services/usuario_service.dart'; // Certifique-se de importar o serviço
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,8 +16,9 @@ class _LoginPageState extends State<LoginPage> {
   
   String? _errorMessage; // Mensagem de erro
   bool _isLoading = false; // Para indicar o carregamento
+  final storage = const FlutterSecureStorage(); // Instância para armazenamento seguro
 
-  final UsuarioService usuarioService = UsuarioService(baseUrl: 'http://10.151.0.180:3000'); // Defina sua URL base
+  final UsuarioService usuarioService = UsuarioService(baseUrl: 'http://192.168.157.33:3000'); // Defina sua URL base
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: [  
             SizedBox(
               width: 300,
               child: TextField(
@@ -75,25 +75,28 @@ class _LoginPageState extends State<LoginPage> {
     // Tenta fazer o login
     String? token = await usuarioService.login(email, senha);
 
-    setState(() {
-      _isLoading = false; // Para o carregamento
-    });
-
     if (token != null) {
       // Se o login foi bem-sucedido, armazene o token e navegue para a DashboardPage
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('jwt_token', token); // Armazena o token
+      await storage.write(key: 'jwt_token', value: token); // Armazena o token
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MyHomePage(title: "Dashboard"), // Certifique-se de que a DashboardPage está implementada
-        ),
-      );
+      setState(() {
+        _isLoading = false; // Para o carregamento antes de iniciar a navegação
+      });
+
+      // Use um Future.delayed para garantir que o estado do widget se estabilize antes de navegar
+      await Future.delayed(Duration.zero, () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MyHomePage(title: "Dashboard"), 
+          ),
+        );
+      });
     } else {
       // Se falhar, exiba uma mensagem de erro
       setState(() {
         _errorMessage = 'E-mail ou senha incorretos.'; // Mensagem de erro
+        _isLoading = false; // Para o carregamento
       });
     }
   }

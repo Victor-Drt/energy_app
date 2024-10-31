@@ -1,6 +1,3 @@
-// Copyright 2019 the Dart project authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license
-// that can be found in the LICENSE file.
 import 'package:energy_app/pages/home_page.dart';
 import 'package:energy_app/pages/login_page.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +21,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
       ),
       home: const MyHomePage(title: 'Dashboard'),
-      // home: const LoginPage(),
+      // home: LoginPage(),
     );
   }
 }

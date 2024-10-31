@@ -16,42 +16,35 @@ class DispositivosPage extends StatefulWidget {
 
 class _DispositivosPageState extends State<DispositivosPage> {
   late Future<List<Dispositivo>> _dispositivosData;
-  late Future<List<Bloco>> _blocosData;
   List<Dispositivo> itensDispositivo = [];
   List<Bloco> blocos = [];
   List<Dispositivo> itensDispositivoFiltrado = [];
   String? dropdownValue;
   bool isLoading = true;
   bool showErrorBar = false;
+  final dispositivoService = DispositivoService();
 
-  TextStyle estiloTextoDropdown =
-      const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
+  TextStyle estiloTextoDropdown = const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
 
   @override
   void initState() {
     super.initState();
-    final dispositivoService = DispositivoService();
-    final blocoService = BlocoService();
+    _fetchDispositivos(); // Chama a função para buscar dispositivos ao iniciar
+  }
 
+  Future<void> _fetchDispositivos() async {
     try {
-      _blocosData = blocoService.fetchBloco().then((b) {
-        setState(() {
-          blocos = b;
-        });
-        return b;
-      });
-
-      _dispositivosData = dispositivoService.fetchDispositivo().then((data) {
-        setState(() {
-          itensDispositivo = data;
-          itensDispositivoFiltrado = data;
-          isLoading = false;
-        });
-        return data;
+      final dispositivos = await dispositivoService.fetchDispositivo();
+      setState(() {
+        itensDispositivo = dispositivos;
+        itensDispositivoFiltrado = dispositivos;
+        isLoading = false;
+        showErrorBar = false;
       });
     } catch (e) {
       setState(() {
         showErrorBar = true;
+        isLoading = false;
       });
     }
   }
@@ -60,88 +53,83 @@ class _DispositivosPageState extends State<DispositivosPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: !isLoading
-              ? blocos.isNotEmpty
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.fromLTRB(6, 16, 6, 32),
-                          width: MediaQuery.sizeOf(context).width * 0.8,
-                          padding: const EdgeInsets.all(6.0),
-                          decoration: const BoxDecoration(
-                              color: Color.fromRGBO(239, 249, 244, 1.0),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20))),
-                          child: DropdownButton<String>(
-                            isExpanded: true,
-                            alignment: AlignmentDirectional.center,
-                            style: estiloTextoDropdown,
-                            hint: Text("Escolha o Bloco",
-                                textAlign: TextAlign.center,
-                                style: estiloTextoDropdown),
-                            value: dropdownValue,
-                            icon: const Icon(
-                              Icons.filter_alt_outlined,
-                            ),
-                            onChanged: (String? value) {
-                              setState(() {
-                                dropdownValue = value!;
-                                if (dropdownValue != null) {
-                                  itensDispositivoFiltrado = itensDispositivo
-                                      .where((e) =>
-                                          e.blocoId.toString() == dropdownValue)
-                                      .toList();
-                                }
-                              });
-                            },
-                            items: blocos
-                                .map<DropdownMenuItem<String>>((Bloco value) {
-                              return DropdownMenuItem<String>(
-                                alignment: Alignment.center,
-                                value: value.id.toString(),
-                                child: Text(
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                  value.nome.toString(),
-                                ),
-                              );
-                            }).toList(),
-                          ),
+        child: isLoading
+            ? const CircularProgressIndicator() // Exibe o indicador de carregamento enquanto carrega
+            : showErrorBar
+                ? const ErrorConection() // Exibe mensagem de erro caso haja falha de conexão
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Dropdown de seleção de blocos
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(6, 16, 6, 32),
+                        width: MediaQuery.sizeOf(context).width * 0.8,
+                        padding: const EdgeInsets.all(6.0),
+                        decoration: const BoxDecoration(
+                          color: Color.fromRGBO(239, 249, 244, 1.0),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
-                        Expanded(
-                            child: GridView.count(
-                                crossAxisCount: 2,
-                                children: List.generate(
-                                    itensDispositivoFiltrado.length, (index) {
-                                  return 
-                                  // Center(child: 
-                                      ItemDispositivo(
-                                          dispositivo:
-                                              itensDispositivoFiltrado[index],
-                                          quandoClicar: () => Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PageHistorico(
-                                                          dispositivos:
-                                                              itensDispositivo,
-                                                          dispositovId:
-                                                              itensDispositivoFiltrado[
-                                                                      index]
-                                                                  .id!
-                                                                  .toInt(),
-                                                        )),
-                                              ));
-                                  // );
-                                }))),
-                        if (showErrorBar) Text("Erro de rede")
-                      ],
-                    )
-                  : const ErrorConection()
-              : const CircularProgressIndicator()),
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          alignment: AlignmentDirectional.center,
+                          style: estiloTextoDropdown,
+                          hint: Text(
+                            "Escolha o Bloco",
+                            textAlign: TextAlign.center,
+                            style: estiloTextoDropdown,
+                          ),
+                          value: dropdownValue,
+                          icon: const Icon(Icons.filter_alt_outlined),
+                          onChanged: (String? value) {
+                            setState(() {
+                              dropdownValue = value;
+                              if (dropdownValue != null) {
+                                // Filtra dispositivos pelo ID do ambiente
+                                itensDispositivoFiltrado = itensDispositivo
+                                    .where((e) => e.ambienteId == dropdownValue)
+                                    .toList();
+                              }
+                            });
+                          },
+                          items: blocos.map<DropdownMenuItem<String>>((Bloco value) {
+                            return DropdownMenuItem<String>(
+                              alignment: Alignment.center,
+                              value: value.id.toString(),
+                              child: Text(
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                                value.nome.toString(),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      // Grid de dispositivos
+                      Expanded(
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          children: List.generate(itensDispositivoFiltrado.length, (index) {
+                            return ItemDispositivo(
+                              dispositivo: itensDispositivoFiltrado[index],
+                              quandoClicar: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PageHistorico(
+                                    dispositivos: itensDispositivo,
+                                    dispositovId: int.parse(itensDispositivoFiltrado[index].id!),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                      if (showErrorBar) const Text("Erro de rede"),
+                    ],
+                  ),
+      ),
     );
   }
 }

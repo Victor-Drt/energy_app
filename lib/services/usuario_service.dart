@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:energy_app/models/usuario.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class UsuarioService {
   final String baseUrl;
+  final _storage = const FlutterSecureStorage();
 
   UsuarioService({required this.baseUrl});
 
@@ -42,12 +44,26 @@ class UsuarioService {
     );
 
     if (response.statusCode == 200) {
-      // Assume que o token JWT é retornado no corpo da resposta
       final Map<String, dynamic> responseData = jsonDecode(response.body);
-      return responseData['token']; // Ajuste a chave conforme necessário
+      final String token = responseData['token']; // Ajuste a chave conforme necessário
+
+      // Armazena o token de forma segura
+      await _storage.write(key: 'bearerToken', value: token);
+      
+      return token;
     } else {
       print('Erro ao fazer login: ${response.statusCode}');
       return null;
     }
+  }
+
+  // Método para recuperar o token JWT armazenado
+  Future<String?> getToken() async {
+    return await _storage.read(key: 'bearerToken');
+  }
+
+  // Método para fazer logout e remover o token armazenado
+  Future<void> logout() async {
+    await _storage.delete(key: 'bearerToken');
   }
 }
