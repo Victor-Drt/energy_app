@@ -20,8 +20,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MyHomePage(title: 'Dashboard'),
-      // home: LoginPage(),
+      // home: const MyHomePage(title: 'Dashboard'),
+      home: LoginPage(),
     );
   }
 }

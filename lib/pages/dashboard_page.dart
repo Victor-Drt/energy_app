@@ -65,11 +65,16 @@ class _PageDashboardState extends State<PageDashboard> {
                         fontWeight: FontWeight.bold)),
               ],
             ),
-            Image.asset(
-              'images/graficos.png',
+            SizedBox(
               width: 124,
               height: 124,
+              child: Container(color: Colors.red,),
             )
+            // Image.asset(
+            //   'images/graficos.png',
+            //   width: 124,
+            //   height: 124,
+            // )
           ]));
     }
 

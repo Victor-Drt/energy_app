@@ -17,9 +17,9 @@ class DispositivoService {
   }
 
   Future<List<Dispositivo>> fetchDispositivo() async {
-    final url = Uri.parse('${baseUrl}dispositivos/ca3b41d7-529f-47c1-ad9d-04a4686dc64e');
-    // final token = await _getToken(); // Recupera o token armazenado
-    final token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MzFmYjk2MS1lYzllLTQyYjUtYjIwMC01N2ZiOTYwNjk0ZTAiLCJpYXQiOjE3MzA0MDA1MDQsImV4cCI6MTczMDQwNDEwNH0.J2uMvdYSxVP4gv0P6FF6ALgnJ8hIxSDZd6wFufDcqm8";
+    final url = Uri.parse('${baseUrl}/dispositivos/f6a50b38-c397-467a-82df-46acb6762b1d');
+    final token = await _getToken(); // Recupera o token armazenado
+    // final token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MzFmYjk2MS1lYzllLTQyYjUtYjIwMC01N2ZiOTYwNjk0ZTAiLCJpYXQiOjE3MzA0MDA1MDQsImV4cCI6MTczMDQwNDEwNH0.J2uMvdYSxVP4gv0P6FF6ALgnJ8hIxSDZd6wFufDcqm8";
 
     try {
       final response = await http.get(

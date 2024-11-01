@@ -1,7 +1,9 @@
 import 'package:energy_app/models/ambiente.dart';
 import 'package:energy_app/pages/dispositivos_page.dart';
 import 'package:energy_app/pages/historico_page.dart';
+import 'package:energy_app/services/ambiente_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AmbientesPage extends StatefulWidget {
   const AmbientesPage({super.key});
@@ -11,12 +13,34 @@ class AmbientesPage extends StatefulWidget {
 }
 
 class _AmbientesPageState extends State<AmbientesPage> {
+  final ambienteService = AmbienteService();
+  final storage = const FlutterSecureStorage();
+
+  List<Ambiente> itensAmbiente = [];
+  List<Ambiente> itensAmbienteFiltrado = [];
+  bool isLoading = true;
+
   Ambiente a1 = Ambiente(
       id: "id_ambiente",
       nome: "Quarto Victor",
       dataCriacao: "2024-10-30",
       qtdDispositivos: 1,
       usuarioId: "id_usuario");
+
+  Future<void> _fetchAmbientes() async {
+    try {
+      final ambientes = await ambienteService.listarAmbientes();
+      setState(() {
+        itensAmbiente = ambientes;
+        itensAmbienteFiltrado = ambientes;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   Widget ambienteContainer(Ambiente ambiente) {
     return Container(
@@ -75,7 +99,10 @@ class _AmbientesPageState extends State<AmbientesPage> {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => PageHistorico(dispositivos: [], dispositovId: 1,)),
+                          builder: (context) => PageHistorico(
+                                dispositivos: [],
+                                dispositovId: 1,
+                              )),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -153,21 +180,28 @@ class _AmbientesPageState extends State<AmbientesPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _fetchAmbientes(); // Chama a função para buscar dispositivos ao iniciar
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: ListView(
-          children: [
-            ambienteContainer(a1),
-            ambienteContainer(a1),
-            ambienteContainer(a1),
-            ambienteContainer(a1)
-          ],
-        ),
+        child: isLoading
+            ? const CircularProgressIndicator()
+            : itensAmbienteFiltrado.isNotEmpty
+                      ? ListView.builder(
+                itemCount: itensAmbienteFiltrado.length,
+                itemBuilder: (context, index) {
+                  return ambienteContainer(itensAmbiente[index]);
+                },
+              ) : Text("Voce não possui ambientes cadastrados."),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
-        onPressed: () {},
+        onPressed: () { },
         child: Icon(
           Icons.add,
           color: Color.fromRGBO(104, 192, 41, 1),

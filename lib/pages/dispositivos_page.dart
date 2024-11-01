@@ -24,7 +24,8 @@ class _DispositivosPageState extends State<DispositivosPage> {
   bool showErrorBar = false;
   final dispositivoService = DispositivoService();
 
-  TextStyle estiloTextoDropdown = const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
+  TextStyle estiloTextoDropdown =
+      const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
 
   @override
   void initState() {
@@ -42,6 +43,7 @@ class _DispositivosPageState extends State<DispositivosPage> {
         showErrorBar = false;
       });
     } catch (e) {
+      print(e);
       setState(() {
         showErrorBar = true;
         isLoading = false;
@@ -52,11 +54,18 @@ class _DispositivosPageState extends State<DispositivosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Dispositivos",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color.fromRGBO(114, 187, 57, 1),
+      ),
       body: Center(
         child: isLoading
-            ? const CircularProgressIndicator() // Exibe o indicador de carregamento enquanto carrega
+            ? const CircularProgressIndicator()
             : showErrorBar
-                ? const ErrorConection() // Exibe mensagem de erro caso haja falha de conexão
+                ? const ErrorConection()
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -91,7 +100,8 @@ class _DispositivosPageState extends State<DispositivosPage> {
                               }
                             });
                           },
-                          items: blocos.map<DropdownMenuItem<String>>((Bloco value) {
+                          items: blocos
+                              .map<DropdownMenuItem<String>>((Bloco value) {
                             return DropdownMenuItem<String>(
                               alignment: Alignment.center,
                               value: value.id.toString(),
@@ -110,7 +120,8 @@ class _DispositivosPageState extends State<DispositivosPage> {
                       Expanded(
                         child: GridView.count(
                           crossAxisCount: 2,
-                          children: List.generate(itensDispositivoFiltrado.length, (index) {
+                          children: List.generate(
+                              itensDispositivoFiltrado.length, (index) {
                             return ItemDispositivo(
                               dispositivo: itensDispositivoFiltrado[index],
                               quandoClicar: () => Navigator.push(
@@ -118,7 +129,8 @@ class _DispositivosPageState extends State<DispositivosPage> {
                                 MaterialPageRoute(
                                   builder: (context) => PageHistorico(
                                     dispositivos: itensDispositivo,
-                                    dispositovId: int.parse(itensDispositivoFiltrado[index].id!),
+                                    dispositovId: int.parse(
+                                        itensDispositivoFiltrado[index].id!),
                                   ),
                                 ),
                               ),
