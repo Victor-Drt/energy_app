@@ -14,19 +14,19 @@ class Ambiente {
 
   Ambiente.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    usuarioId = json['usuario_id'];
+    usuarioId = json['usuarioId'];
     nome = json['nome'];
-    dataCriacao = json['data_criacao'];
-    qtdDispositivos = json['qtd_dispositivos'];
+    dataCriacao = json['dataCriacao'];
+    qtdDispositivos = json['qtdDispositivos'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['usuario_id'] = this.usuarioId;
+    data['usuarioId'] = this.usuarioId;
     data['nome'] = this.nome;
-    data['data_criacao'] = this.dataCriacao;
-    data['qtd_dispositivos'] = this.qtdDispositivos;
+    data['dataCriacao'] = this.dataCriacao;
+    data['qtdDispositivos'] = this.qtdDispositivos;
     return data;
   }
 }
