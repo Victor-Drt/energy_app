@@ -3,11 +3,11 @@ class Qualidade {
   String? timestamp;
   String? usuarioId;
   double? fatorPotencia;
-  int? flutuacaoTensaoMinima;
-  int? flutuacaoTensaoMaxima;
-  int? thdTensao;
-  int? thdCorrente;
-  int? oscilacaoTensao;
+  double? flutuacaoTensaoMinima;
+  double? flutuacaoTensaoMaxima;
+  double? thdTensao;
+  double? thdCorrente;
+  double? oscilacaoTensao;
 
   Qualidade(
       {this.id,
