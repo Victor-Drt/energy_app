@@ -40,7 +40,7 @@ class _AmbientesPageState extends State<AmbientesPage> {
 
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // Impede fechar clicando fora do diálogo
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Criar Ambiente'),
@@ -155,7 +155,7 @@ class _AmbientesPageState extends State<AmbientesPage> {
                               fontFamily: "Roboto",
                               fontSize: 24,
                               color: Colors.white)),
-                      Text("25.00kWh",
+                      Text("${ambiente.consumoAcumuladokWh}kWh",
                           style: TextStyle(
                               fontFamily: "Roboto",
                               fontSize: 24,
@@ -188,7 +188,9 @@ class _AmbientesPageState extends State<AmbientesPage> {
                   onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => DispositivosPage()),
+                            builder: (context) => DispositivosPage(
+                                  ambienteId: ambiente.id.toString(),
+                                )),
                       ),
                   child: Container(
                       alignment: Alignment.center,
@@ -244,8 +246,8 @@ class _AmbientesPageState extends State<AmbientesPage> {
                 : const Text("Você não possui ambientes cadastrados."),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
         onPressed: _showCreateAmbienteDialog,
+        backgroundColor: Colors.white,
         child: const Icon(
           Icons.add,
           color: Color.fromRGBO(104, 192, 41, 1),

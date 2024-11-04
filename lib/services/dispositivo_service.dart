@@ -16,10 +16,9 @@ class DispositivoService {
     return await _storage.read(key: 'bearerToken');
   }
 
-  Future<List<Dispositivo>> fetchDispositivo() async {
-    final url = Uri.parse('${baseUrl}/dispositivos/f6a50b38-c397-467a-82df-46acb6762b1d');
-    final token = await _getToken(); // Recupera o token armazenado
-    // final token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MzFmYjk2MS1lYzllLTQyYjUtYjIwMC01N2ZiOTYwNjk0ZTAiLCJpYXQiOjE3MzA0MDA1MDQsImV4cCI6MTczMDQwNDEwNH0.J2uMvdYSxVP4gv0P6FF6ALgnJ8hIxSDZd6wFufDcqm8";
+  Future<List<Dispositivo>> fetchDispositivo(String? ambienteId) async {
+    final url = Uri.parse('${baseUrl}/dispositivos/${ambienteId}');
+    final token = await _getToken();
 
     try {
       final response = await http.get(
@@ -48,4 +47,30 @@ class DispositivoService {
       return [];
     }
   }
+
+  // Método para cadastrar um novo dispositivo
+  Future<Dispositivo?> cadastrarDispositivo(Dispositivo dispositivo) async {
+    final token = await _getToken();
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/dispositivos/'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', // Inclui o token JWT
+      },
+      body: jsonEncode({
+        "ambienteId": dispositivo.ambienteId,
+        "descricao": dispositivo.descricao,
+        "macAddress": dispositivo.macAddress
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      return Dispositivo.fromJson(jsonDecode(response.body));
+    } else {
+      print('Erro ao cadastrar ambiente: ${response.statusCode}');
+      return null;
+    }
+  }
+
 }

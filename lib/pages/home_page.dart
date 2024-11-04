@@ -25,7 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static List<Widget> _widgetOptions = <Widget>[
     PageDashboard(),
     AmbientesPage(),
-    DispositivosPage(),
+    Placeholder(),
     PageComparativo(),
   ];
 

@@ -1,8 +1,11 @@
+import 'dart:ffi';
+
 class Ambiente {
   String? id;
   String? usuarioId;
   String? nome;
   String? dataCriacao;
+  String? consumoAcumuladokWh;
   int? qtdDispositivos;
 
   Ambiente(
@@ -10,6 +13,7 @@ class Ambiente {
       this.usuarioId,
       this.nome,
       this.dataCriacao,
+      this.consumoAcumuladokWh,
       this.qtdDispositivos});
 
   Ambiente.fromJson(Map<String, dynamic> json) {
@@ -18,6 +22,7 @@ class Ambiente {
     nome = json['nome'];
     dataCriacao = json['dataCriacao'];
     qtdDispositivos = json['qtdDispositivos'];
+    consumoAcumuladokWh = json['consumoAcumuladokWh']!.toStringAsFixed(3).toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -27,6 +32,7 @@ class Ambiente {
     data['nome'] = this.nome;
     data['dataCriacao'] = this.dataCriacao;
     data['qtdDispositivos'] = this.qtdDispositivos;
+    data['consumoAcumuladokWh'] = this.consumoAcumuladokWh;
     return data;
   }
 }
