@@ -2,6 +2,7 @@ import 'package:energy_app/pages/ambientes_page.dart';
 import 'package:energy_app/pages/comparativo_page.dart';
 import 'package:energy_app/pages/dashboard_page.dart';
 import 'package:energy_app/pages/dispositivos_page.dart';
+import 'package:energy_app/pages/qualidade_page.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -25,7 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static List<Widget> _widgetOptions = <Widget>[
     PageDashboard(),
     AmbientesPage(),
-    Placeholder(),
+    QualidadePage(),
     PageComparativo(),
   ];
 
@@ -35,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       if (_selectedIndex == 0) appBarTitle = "Dashboard";
       if (_selectedIndex == 1) appBarTitle = "Ambientes";
-      if (_selectedIndex == 2) appBarTitle = "Dispositivos";
+      if (_selectedIndex == 2) appBarTitle = "Qualidade";
       if (_selectedIndex == 3) appBarTitle = "Comparativo";
     });
   }
@@ -91,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 ListTile(
                   title: const Row(
-                    children: [Icon(Icons.history), Text("Dispositivos")],
+                    children: [Icon(Icons.history), Text("Qualidade")],
                   ),
                   onTap: () {
                     Navigator.pop(context);
@@ -132,8 +133,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: 'Ambientes',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.memory),
-                  label: 'Dispositivos',
+                  icon: Icon(Icons.energy_savings_leaf_outlined),
+                  label: 'Qualidade',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.compare_arrows),

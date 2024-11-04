@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   final storage = const FlutterSecureStorage(); // Instância para armazenamento seguro
 
   final UsuarioService usuarioService = UsuarioService(
-      baseUrl: 'http://192.168.15.103:3000'); // Defina sua URL base
+      baseUrl: 'http://10.151.0.180:3000'); // Defina sua URL base
 
   @override
   void initState() {
