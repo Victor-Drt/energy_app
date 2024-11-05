@@ -6,7 +6,7 @@ class ErrorConection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Text(
-      "Houve um problema de conexão. Tente novamente!",
+      "Sem historico de leitura para este periodo!",
       style: TextStyle(fontSize: 16, color: Colors.grey),
     );
   }

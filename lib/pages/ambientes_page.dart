@@ -1,4 +1,5 @@
 import 'package:energy_app/models/ambiente.dart';
+import 'package:energy_app/pages/consumo_page.dart';
 import 'package:energy_app/pages/dispositivos_page.dart';
 import 'package:energy_app/pages/historico_page.dart';
 import 'package:energy_app/services/ambiente_service.dart';
@@ -142,10 +143,7 @@ class _AmbientesPageState extends State<AmbientesPage> {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => PageHistorico(
-                              dispositivos: [],
-                              dispositovId: "",
-                            )),
+                        builder: (context) => ConsumoPage(ambienteId: ambiente.id!)),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

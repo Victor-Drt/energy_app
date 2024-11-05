@@ -46,6 +46,7 @@ dependencies:
   flutter_secure_storage: ^9.2.2
   jwt_decoder: ^2.0.1
   flutter_masked_text2: ^0.9.1
+  syncfusion_flutter_charts: ^27.1.58
 
 dev_dependencies:
   flutter_test:
