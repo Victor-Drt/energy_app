@@ -17,9 +17,8 @@ class AmbienteService {
   }
 
   // Cadastrar um novo ambiente
-  Future<Ambiente?> cadastrarAmbiente(Ambiente ambiente) async {
+  Future<bool> cadastrarAmbiente(Ambiente ambiente) async {
     final token = await _getToken();
-    print("IAAA: ${ambiente.nome}");
 
     final response = await http.post(
       Uri.parse('$baseUrl/ambientes/'),
@@ -31,10 +30,10 @@ class AmbienteService {
     );
 
     if (response.statusCode == 201) {
-      return Ambiente.fromJson(jsonDecode(response.body));
+      return true;
     } else {
       print('Erro ao cadastrar ambiente: ${response.statusCode}');
-      return null;
+      return false;
     }
   }
 
@@ -72,7 +71,6 @@ class AmbienteService {
 
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
-      print(data);
       return data.map((json) => Ambiente.fromJson(json)).toList();
     } else {
       print('Erro ao listar ambientes: ${response.statusCode}');

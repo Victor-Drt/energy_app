@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'package:energy_app/models/usuario.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class UsuarioService {
   final String baseUrl;
   final _storage = const FlutterSecureStorage();
 
-  UsuarioService({required this.baseUrl});
+  UsuarioService({String? baseUrl}): baseUrl = baseUrl ?? dotenv.env["api"] ?? "";
 
   // Método para registrar um novo usuário
   Future<Usuario?> register(String email, String senha) async {

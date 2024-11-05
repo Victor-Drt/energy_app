@@ -222,8 +222,8 @@ class _DispositivosPageState extends State<DispositivosPage> {
                                 MaterialPageRoute(
                                   builder: (context) => PageHistorico(
                                     dispositivos: itensDispositivo,
-                                    dispositovId: int.parse(
-                                        itensDispositivoFiltrado[index].id!),
+                                    dispositovId: 
+                                        itensDispositivoFiltrado[index].macAddress!,
                                   ),
                                 ),
                               ),

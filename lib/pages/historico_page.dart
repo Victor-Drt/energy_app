@@ -1,9 +1,9 @@
-import 'package:energy_app/models/consumo.dart';
+import 'package:energy_app/models/medicao.dart';
 import 'package:energy_app/models/dispositivo.dart';
-import 'package:energy_app/services/consumo_service.dart';
+import 'package:energy_app/services/medicao_service.dart';
 import 'package:energy_app/widgets/itens/data_divider.dart';
 import 'package:energy_app/widgets/messages/error_conection.dart';
-import 'package:energy_app/widgets/itens/item_consumo.dart';
+import 'package:energy_app/widgets/itens/item_medicao.dart'; // Atualize para o widget específico de Medicao
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
@@ -13,31 +13,37 @@ class PageHistorico extends StatefulWidget {
       {super.key, required this.dispositivos, required this.dispositovId});
 
   final List<Dispositivo> dispositivos;
-  final int dispositovId;
+  final String dispositovId;
 
   @override
   State<PageHistorico> createState() => _PageHistoricoState();
 }
 
 class _PageHistoricoState extends State<PageHistorico> {
-  late Future<List<Consumo>> _consumoData;
-  List<Consumo> itensConsumo = [];
-  List<Consumo> itensConsumoFiltrada = [];
+  late Future<List<Medicao>> _medicaoData;
+  List<Medicao> itensMedicao = [];
+  List<Medicao> itensMedicaoFiltrada = [];
   String? dropdownValue;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _carregarConsumo(widget.dispositovId);
+    _carregarMedicao(widget.dispositovId);
   }
 
-  void _carregarConsumo(int dispositivoId) {
-    final consumoService = ConsumoService();
-    _consumoData = consumoService.fetchConsumoByDispositivo(dispositivoId).then((data) {
+  void _carregarMedicao(String dispositivoId) {
+    final medicaoService = MedicaoService();
+
+    _medicaoData = medicaoService
+        .listarMedicoes(
+            macAddress: dispositivoId.toString(),
+            startDate: '2024-01-01',
+            endDate: '2024-12-31')
+        .then((data) {
       setState(() {
-        itensConsumo = data;
-        itensConsumoFiltrada = data;
+        itensMedicao = data;
+        itensMedicaoFiltrada = data;
         isLoading = false;
       });
       return data;
@@ -51,7 +57,7 @@ class _PageHistoricoState extends State<PageHistorico> {
         child: Padding(
           padding: const EdgeInsets.only(top: 16.0),
           child: !isLoading
-              ? itensConsumo.isNotEmpty
+              ? itensMedicao.isNotEmpty
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -61,7 +67,8 @@ class _PageHistoricoState extends State<PageHistorico> {
                           padding: const EdgeInsets.all(6.0),
                           decoration: const BoxDecoration(
                               color: Color.fromRGBO(239, 249, 244, 1.0),
-                              borderRadius: BorderRadius.all(Radius.circular(20))),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20))),
                           child: DropdownButton<String>(
                             isExpanded: true,
                             alignment: Alignment.center,
@@ -74,15 +81,18 @@ class _PageHistoricoState extends State<PageHistorico> {
                               setState(() {
                                 dropdownValue = value;
                                 if (dropdownValue != null) {
-                                  int dispositivoId = int.parse(dropdownValue!);
-                                  _carregarConsumo(dispositivoId);
-                                  itensConsumoFiltrada = itensConsumo
-                                      .where((e) => e.dispositivoId.toString() == dropdownValue)
+                                  String dispositivoId = dropdownValue!;
+                                  _carregarMedicao(dispositivoId);
+                                  itensMedicaoFiltrada = itensMedicao
+                                      .where((e) =>
+                                          e.dispositivoId == dropdownValue)
                                       .toList();
                                 }
                               });
                             },
-                            items: widget.dispositivos.map<DropdownMenuItem<String>>((Dispositivo value) {
+                            items: widget.dispositivos
+                                .map<DropdownMenuItem<String>>(
+                                    (Dispositivo value) {
                               return DropdownMenuItem<String>(
                                 alignment: Alignment.center,
                                 value: value.id.toString(),
@@ -98,26 +108,33 @@ class _PageHistoricoState extends State<PageHistorico> {
                           ),
                         ),
                         Expanded(
-                          child: FutureBuilder<List<Consumo>>(
-                            future: _consumoData,
+                          child: FutureBuilder<List<Medicao>>(
+                            future: _medicaoData,
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
                               } else if (snapshot.hasError) {
-                                return Center(child: Text('Erro: ${snapshot.error}'));
-                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                return const Center(child: Text('Nenhum dado disponível'));
+                                return Center(
+                                    child: Text('Erro: ${snapshot.error}'));
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.isEmpty) {
+                                return const Center(
+                                    child: Text('Nenhum dado disponível'));
                               } else {
                                 var newFormat = DateFormat("dd-MM-yy");
                                 var hourFormat = DateFormat("HH:mm:ss");
 
                                 return GroupedListView<dynamic, String>(
-                                  elements: itensConsumoFiltrada,
+                                  elements: itensMedicaoFiltrada,
                                   groupBy: (element) => newFormat.format(
-                                      DateTime.parse(element.createdAt ?? '')),
-                                  groupSeparatorBuilder: (String groupByValue) =>
-                                      DateDivider(textDate: groupByValue),
-                                  itemBuilder: (context, dynamic element) => ItemConsumo(
+                                      DateTime.parse(element.timestamp ?? '')),
+                                  groupSeparatorBuilder:
+                                      (String groupByValue) =>
+                                          DateDivider(textDate: groupByValue),
+                                  itemBuilder: (context, dynamic element) =>
+                                      ItemMedicao(
                                     element: element,
                                     hourFormat: hourFormat,
                                   ),
@@ -127,7 +144,7 @@ class _PageHistoricoState extends State<PageHistorico> {
                                     return dt1.compareTo(dt2);
                                   },
                                   useStickyGroupSeparators: true,
-                                  order: GroupedListOrder.DESC,
+                                  order: GroupedListOrder.ASC,
                                 );
                               }
                             },

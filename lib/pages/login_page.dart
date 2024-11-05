@@ -19,8 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false; // Para indicar o carregamento
   final storage = const FlutterSecureStorage(); // Instância para armazenamento seguro
 
-  final UsuarioService usuarioService = UsuarioService(
-      baseUrl: 'http://10.151.0.180:3000'); // Defina sua URL base
+  final UsuarioService usuarioService = UsuarioService(); // Defina sua URL base
 
   @override
   void initState() {

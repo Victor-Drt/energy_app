@@ -61,7 +61,6 @@ class _AmbientesPageState extends State<AmbientesPage> {
               child: const Text('Criar'),
               onPressed: () async {
                 if (nomeController.text.isNotEmpty) {
-                  // Criar ambiente
                   Ambiente novoAmbiente = Ambiente(
                     id: 'id_novo_ambiente', // Você pode gerar um ID único aqui
                     nome: nomeController.text,
@@ -71,9 +70,10 @@ class _AmbientesPageState extends State<AmbientesPage> {
                   );
 
                   await ambienteService.cadastrarAmbiente(
-                      novoAmbiente); // Chame seu método para criar o ambiente
-                  Navigator.of(context).pop(); // Fecha o diálogo
-                  _fetchAmbientes(); // Atualiza a lista de ambientes
+                      novoAmbiente);
+                      
+                  Navigator.of(context).pop();
+                  _fetchAmbientes();
                 }
               },
             ),
@@ -144,7 +144,7 @@ class _AmbientesPageState extends State<AmbientesPage> {
                     MaterialPageRoute(
                         builder: (context) => PageHistorico(
                               dispositivos: [],
-                              dispositovId: 1,
+                              dispositovId: "",
                             )),
                   ),
                   child: Column(
