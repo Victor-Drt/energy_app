@@ -72,16 +72,6 @@ class _ConsumoPageState extends State<ConsumoPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Text(
-                      'Consumo do Ambiente',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                        height: 16), // Espaçamento entre o título e o gráfico
                     Expanded(
                       child: 
                       // Placeholder(),

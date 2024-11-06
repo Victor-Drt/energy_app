@@ -43,6 +43,7 @@ class LineChartConsumoAmbiente extends StatelessWidget {
       title: ChartTitle(text: 'Consumo de Energia por Dispositivo'),
       legend: Legend(isVisible: true),
       primaryXAxis: DateTimeAxis(
+        title: AxisTitle(text: 'Tempo (s)'),
         dateFormat: DateFormat.Hm(), // Formata o eixo X para horas
         intervalType: DateTimeIntervalType.minutes,
         interval: 1,
