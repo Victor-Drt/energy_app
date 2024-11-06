@@ -5,6 +5,7 @@ import 'package:energy_app/pages/historico_page.dart';
 import 'package:energy_app/services/ambiente_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 
 class AmbientesPage extends StatefulWidget {
   const AmbientesPage({super.key});
@@ -21,9 +22,17 @@ class _AmbientesPageState extends State<AmbientesPage> {
   List<Ambiente> itensAmbienteFiltrado = [];
   bool isLoading = true;
 
+  DateTime? startDate = DateTime.now();
+  DateTime? endDate = DateTime(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
+  DateFormat formattedDate = DateFormat('dd/MM/yyyy');
+
   Future<void> _fetchAmbientes() async {
     try {
-      final ambientes = await ambienteService.listarAmbientes();
+      final ambientes = await ambienteService.listarAmbientes(
+        startDate: startDate,
+        endDate: endDate,
+      );
       setState(() {
         itensAmbiente = ambientes;
         itensAmbienteFiltrado = ambientes;
@@ -70,9 +79,8 @@ class _AmbientesPageState extends State<AmbientesPage> {
                     usuarioId: 'id_usuario',
                   );
 
-                  await ambienteService.cadastrarAmbiente(
-                      novoAmbiente);
-                      
+                  await ambienteService.cadastrarAmbiente(novoAmbiente);
+
                   Navigator.of(context).pop();
                   _fetchAmbientes();
                 }
@@ -143,7 +151,8 @@ class _AmbientesPageState extends State<AmbientesPage> {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ConsumoPage(ambienteId: ambiente.id!)),
+                        builder: (context) =>
+                            ConsumoPage(ambienteId: ambiente.id!)),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -153,7 +162,7 @@ class _AmbientesPageState extends State<AmbientesPage> {
                               fontFamily: "Roboto",
                               fontSize: 24,
                               color: Colors.white)),
-                      Text("${ambiente.consumoAcumuladokWh}kWh",
+                      Text("${ambiente.consumoAcumuladokWh}kW",
                           style: TextStyle(
                               fontFamily: "Roboto",
                               fontSize: 24,

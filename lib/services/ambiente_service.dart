@@ -59,13 +59,16 @@ class AmbienteService {
   }
 
   // Listar todos os ambientes
-  Future<List<Ambiente>> listarAmbientes() async {
-    final token = await _getToken(); // Recupera o token armazenado
+  Future<List<Ambiente>> listarAmbientes({
+    required startDate,
+    required endDate,
+  }) async {
+    final token = await _getToken();
     final response = await http.get(
-      Uri.parse('$baseUrl/ambientes'),
+      Uri.parse('$baseUrl/ambientes?startDate=${startDate.toIso8601String()}&endDate=${endDate.toIso8601String()}'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Inclui o token JWT
+        'Authorization': 'Bearer $token',
       },
     );
 
