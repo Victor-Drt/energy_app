@@ -4,7 +4,6 @@ import 'package:energy_app/pages/dispositivos_page.dart';
 import 'package:energy_app/pages/historico_page.dart';
 import 'package:energy_app/services/ambiente_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 
 class AmbientesPage extends StatefulWidget {
@@ -16,7 +15,6 @@ class AmbientesPage extends StatefulWidget {
 
 class _AmbientesPageState extends State<AmbientesPage> {
   final ambienteService = AmbienteService();
-  final storage = const FlutterSecureStorage();
 
   List<Ambiente> itensAmbiente = [];
   List<Ambiente> itensAmbienteFiltrado = [];

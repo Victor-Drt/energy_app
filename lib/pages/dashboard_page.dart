@@ -1,8 +1,13 @@
+import 'package:energy_app/models/ambiente.dart';
+import 'package:energy_app/models/indicadorDashboard.dart';
+import 'package:energy_app/services/ambiente_service.dart';
+import 'package:energy_app/services/medicao_service.dart';
 import 'package:energy_app/widgets/graphs/grafico_barra.dart';
 import 'package:energy_app/widgets/graphs/grafico_barra_dashboard.dart';
 import 'package:energy_app/widgets/graphs/grafico_linha_dashboard.dart';
 import 'package:energy_app/widgets/graphs/grafico_pizza.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PageDashboard extends StatefulWidget {
   const PageDashboard({super.key});
@@ -12,6 +17,62 @@ class PageDashboard extends StatefulWidget {
 }
 
 class _PageDashboardState extends State<PageDashboard> {
+  final ambienteService = AmbienteService();
+  final medicaoService = MedicaoService();
+
+  List<Ambiente> itensAmbiente = [];
+  late IndicadorDashboard indicadorConsumo;
+
+  bool isLoading = true;
+
+  DateTime? startDate = DateTime.now();
+  DateTime? endDate = DateTime(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
+  DateFormat formattedDate = DateFormat('dd/MM/yyyy');
+
+  Future<void> _fetchAmbientes() async {
+    try {
+      final ambientes = await ambienteService.listarAmbientes(
+        startDate: startDate,
+        endDate: endDate,
+      );
+      setState(() {
+        itensAmbiente = ambientes;
+        isLoading = false;
+      });
+
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchIndicadores() async {
+    try {
+      final data = await medicaoService.obterEstatisticas(
+        startDate: startDate,
+        endDate: endDate,
+      );
+      setState(() {
+        if (data != null) indicadorConsumo = data;
+        isLoading = false;
+      });
+
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchIndicadores();
+    _fetchAmbientes(); // Chama a função para buscar ambientes ao iniciar
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget cardResumoConsumo() {
@@ -34,7 +95,7 @@ class _PageDashboardState extends State<PageDashboard> {
               borderRadius: BorderRadius.all(Radius.circular(20))),
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -42,7 +103,7 @@ class _PageDashboardState extends State<PageDashboard> {
                   "Hoje",
                   style: TextStyle(fontFamily: "Roboto", fontSize: 24),
                 ),
-                Text("25.00 kWh",
+                Text("${indicadorConsumo.consumoDiario?.toStringAsPrecision(5)} kW",
                     style: TextStyle(
                         fontFamily: "Roboto",
                         fontSize: 24,
@@ -51,14 +112,14 @@ class _PageDashboardState extends State<PageDashboard> {
                   "Semana",
                   style: TextStyle(fontFamily: "Roboto", fontSize: 24),
                 ),
-                Text("100.00 kWh",
+                Text("${indicadorConsumo.consumoMensal?.toStringAsPrecision(5)} kW",
                     style: TextStyle(
                         fontFamily: "Roboto",
                         fontSize: 24,
                         fontWeight: FontWeight.bold)),
                 Text("Mês",
                     style: TextStyle(fontFamily: "Roboto", fontSize: 24)),
-                Text("450.00 kWh",
+                Text("${indicadorConsumo.consumoMensal?.toStringAsPrecision(5)} kW",
                     style: TextStyle(
                         fontFamily: "Roboto",
                         fontSize: 24,
@@ -68,7 +129,9 @@ class _PageDashboardState extends State<PageDashboard> {
             SizedBox(
               width: 124,
               height: 124,
-              child: Container(color: Colors.red,),
+              child: Container(
+                color: Colors.red,
+              ),
             )
             // Image.asset(
             //   'images/graficos.png',
@@ -127,30 +190,31 @@ class _PageDashboardState extends State<PageDashboard> {
           ),
         ],
       ),
-      child: BarChartDashboard(title: "Consumo p/ Ambiente", data: [
-        {"hoje": 75.00, "semana": 90.00, "mes": 150.00}
-      ]),
+      child: BarChartDashboard(
+          title: "Consumo p/ Ambiente", ambientes: itensAmbiente),
     );
 
     return Scaffold(
         body: Center(
-      child: ListView(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [cardResumoConsumo()],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              cardMediaTensao("Tensão Média (V)", "220"),
-              cardMediaTensao("Ambientes", "3")
-            ],
-          ),
-          graphBloco
-        ],
-      ),
+      child: isLoading
+          ? CircularProgressIndicator()
+          : ListView(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [cardResumoConsumo()],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    cardMediaTensao("Tensão Média (V)", "${indicadorConsumo.tensaoMedia}"),
+                    cardMediaTensao("Ambientes", "${indicadorConsumo.quantidadeAmbientes}")
+                  ],
+                ),
+                graphBloco
+              ],
+            ),
     ));
   }
 }

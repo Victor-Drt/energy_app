@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:energy_app/models/indicadorDashboard.dart';
 import 'package:energy_app/models/medicaoAmbiente.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -44,27 +45,38 @@ class MedicaoService {
     }
   }
 
-  // Método para listar medições de dispositivos em um ambiente específico
-  Future<List<Medicao>> listarMedicoesPorAmbienteOld(
-      String ambienteId, String startDate, String endDate) async {
+  Future<MedicaoAmbiente?> listarMedicoesPorAmbiente({
+    required ambienteId,
+    required startDate,
+    required endDate,
+  }) async {
     try {
+      // Obtém o token de autenticação
       final token = await _getToken();
 
+      // Realiza a requisição GET para o endpoint da API
       final response = await http.get(
         Uri.parse(
-            '$baseUrl/medicoes/ambiente/$ambienteId?startDate=$startDate&endDate=$endDate'),
+          '$baseUrl/medicoes/ambiente/$ambienteId?startDate=${startDate.toIso8601String()}&endDate=${endDate.toIso8601String()}',
+        ),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token', // Inclui o token JWT
+          'Authorization': 'Bearer $token',
         },
       );
 
       if (response.statusCode == 200) {
-        List<dynamic> data = jsonDecode(response.body);
-        return data.map((item) => Medicao.fromJson(item)).toList();
+        final Map<String, dynamic> data = jsonDecode(response.body);
+
+        if (data.containsKey('devices') && data['devices'] is List) {
+          return MedicaoAmbiente.fromJson(data);
+        } else {
+          print('Estrutura inesperada da resposta JSON: $data');
+          return null;
+        }
       } else {
-        throw Exception(
-            'Erro ao listar medições por ambiente: ${response.statusCode}');
+        print('Erro ao listar medições: ${response.statusCode}');
+        return null;
       }
     } catch (e) {
       print('Erro ao listar medições por ambiente: $e');
@@ -72,48 +84,7 @@ class MedicaoService {
     }
   }
 
-Future<MedicaoAmbiente?> listarMedicoesPorAmbiente({
-  required ambienteId,
-  required startDate,
-  required endDate,
-}) async {
-  try {
-    // Obtém o token de autenticação
-    final token = await _getToken(); 
-
-    // Realiza a requisição GET para o endpoint da API
-    final response = await http.get(
-      Uri.parse(
-        '$baseUrl/medicoes/ambiente/$ambienteId?startDate=${startDate.toIso8601String()}&endDate=${endDate.toIso8601String()}',
-      ),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
-
-      if (data.containsKey('devices') && data['devices'] is List) {
-        return MedicaoAmbiente.fromJson(data);
-      } else {
-        print('Estrutura inesperada da resposta JSON: $data');
-        return null;
-      }
-    } else {
-      print('Erro ao listar medições: ${response.statusCode}');
-      return null;
-    }
-  } catch (e) {
-    print('Erro ao listar medições por ambiente: $e');
-    throw e;
-  }
-}
-
-  // Método para obter estatísticas de medições
-  Future<Map<String, dynamic>> obterEstatisticas(
-      String startDate, String endDate) async {
+  Future<IndicadorDashboard?> obterEstatisticas({required startDate, required endDate}) async {
     try {
       final token = await _getToken();
 
@@ -127,7 +98,9 @@ Future<MedicaoAmbiente?> listarMedicoesPorAmbiente({
       );
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        return IndicadorDashboard.fromJson(data);
+
       } else {
         throw Exception('Erro ao obter estatísticas: ${response.statusCode}');
       }
