@@ -27,9 +27,8 @@ class _PageHistoricoState extends State<PageHistorico> {
   bool isLoading = true;
 
   // datepicker
-  DateTime? startDate = DateTime.now();
-  DateTime? endDate = DateTime(
-      DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
+  DateTime? startDate = DateTime(DateTime.now().year, DateTime.now().month, 1);
+  DateTime? endDate = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
   DateFormat formattedDate = DateFormat('dd/MM/yyyy');
 
   @override
@@ -49,6 +48,12 @@ class _PageHistoricoState extends State<PageHistorico> {
             endDate: formatDateRequisition.format(endDate!))
         .then((data) {
       setState(() {
+        // Ordena a lista de medições da mais recente para a mais antiga
+        data.sort((a, b) {
+          // Se `timestamp` for o campo de data
+          return DateTime.parse(b.timestamp ?? '').compareTo(DateTime.parse(a.timestamp ?? ''));
+        });
+
         itensMedicao = data;
         itensMedicaoFiltrada = data;
         isLoading = false;
@@ -69,7 +74,6 @@ class _PageHistoricoState extends State<PageHistorico> {
       setState(() {
         startDate = picked;
       });
-
       print(startDate);
     }
   }
@@ -77,11 +81,8 @@ class _PageHistoricoState extends State<PageHistorico> {
   Future<void> _selectEndDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: endDate ??
-          (startDate ?? DateTime.now()), // Inicializa com a data de início
-      firstDate: startDate ??
-          DateTime(
-              2000), // Garante que a data de fim não seja antes da data de início
+      initialDate: endDate ?? (startDate ?? DateTime.now()), // Inicializa com a data de início
+      firstDate: startDate ?? DateTime(2000),
       lastDate: DateTime(2101),
     );
 
@@ -140,78 +141,25 @@ class _PageHistoricoState extends State<PageHistorico> {
                             IconButton(onPressed: () => _carregarMedicao(widget.dispositovId), icon: Icon(Icons.search))
                           ],
                         ),
-                        // Container(
-                        //   margin: const EdgeInsets.fromLTRB(6, 16, 6, 32),
-                        //   width: MediaQuery.sizeOf(context).width * 0.8,
-                        //   padding: const EdgeInsets.all(6.0),
-                        //   decoration: const BoxDecoration(
-                        //       color: Color.fromRGBO(239, 249, 244, 1.0),
-                        //       borderRadius:
-                        //           BorderRadius.all(Radius.circular(20))),
-                        //   child: DropdownButton<String>(
-                        //     isExpanded: true,
-                        //     alignment: Alignment.center,
-                        //     style: const TextStyle(
-                        //         fontSize: 16, fontWeight: FontWeight.bold),
-                        //     hint: const Text("Escolha o Dispositivo"),
-                        //     value: dropdownValue,
-                        //     icon: const Icon(Icons.filter_alt_outlined),
-                        //     onChanged: (String? value) {
-                        //       setState(() {
-                        //         dropdownValue = value;
-                        //         if (dropdownValue != null) {
-                        //           String dispositivoId = dropdownValue!;
-                        //           _carregarMedicao(dispositivoId);
-                        //           itensMedicaoFiltrada = itensMedicao
-                        //               .where((e) =>
-                        //                   e.dispositivoId == dropdownValue)
-                        //               .toList();
-                        //         }
-                        //       });
-                        //     },
-                        //     items: widget.dispositivos
-                        //         .map<DropdownMenuItem<String>>(
-                        //             (Dispositivo value) {
-                        //       return DropdownMenuItem<String>(
-                        //         alignment: Alignment.center,
-                        //         value: value.id.toString(),
-                        //         child: Text(
-                        //           value.descricao ?? "Dispositivo ${value.id}",
-                        //           style: const TextStyle(
-                        //               fontSize: 16,
-                        //               fontWeight: FontWeight.bold,
-                        //               color: Colors.black),
-                        //         ),
-                        //       );
-                        //     }).toList(),
-                        //   ),
-                        // ),
                         Expanded(
                           child: FutureBuilder<List<Medicao>>(
                             future: _medicaoData,
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Center(child: CircularProgressIndicator());
                               } else if (snapshot.hasError) {
-                                return Center(
-                                    child: Text('Erro: ${snapshot.error}'));
-                              } else if (!snapshot.hasData ||
-                                  snapshot.data!.isEmpty) {
-                                return const Center(
-                                    child: Text('Nenhum dado disponível'));
+                                return Center(child: Text('Erro: ${snapshot.error}'));
+                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return const Center(child: Text('Nenhum dado disponível'));
                               } else {
                                 var newFormat = DateFormat("dd-MM-yy");
                                 var hourFormat = DateFormat("HH:mm:ss");
 
                                 return GroupedListView<dynamic, String>(
                                   elements: itensMedicaoFiltrada,
-                                  groupBy: (element) => newFormat.format(
-                                      DateTime.parse(element.timestamp ?? '')),
-                                  groupSeparatorBuilder:
-                                      (String groupByValue) =>
-                                          DateDivider(textDate: groupByValue),
+                                  groupBy: (element) => newFormat.format(DateTime.parse(element.timestamp ?? '')),
+                                  groupSeparatorBuilder: (String groupByValue) =>
+                                      DateDivider(textDate: groupByValue),
                                   itemBuilder: (context, dynamic element) =>
                                       ItemMedicao(
                                     element: element,
@@ -220,10 +168,10 @@ class _PageHistoricoState extends State<PageHistorico> {
                                   groupComparator: (value1, value2) {
                                     var dt1 = newFormat.parse(value1);
                                     var dt2 = newFormat.parse(value2);
-                                    return dt2.compareTo(dt1);
+                                    return dt2.compareTo(dt1); // Garante a ordenação decrescente
                                   },
                                   useStickyGroupSeparators: true,
-                                  order: GroupedListOrder.DESC,
+                                  order: GroupedListOrder.ASC,
                                 );
                               }
                             },

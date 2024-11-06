@@ -6,7 +6,8 @@ import 'package:intl/intl.dart';
 class LineChartConsumoAmbiente extends StatelessWidget {
   final MedicaoAmbiente? medicaoData;
 
-  const LineChartConsumoAmbiente({Key? key, required this.medicaoData}) : super(key: key);
+  const LineChartConsumoAmbiente({Key? key, required this.medicaoData})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,8 @@ class LineChartConsumoAmbiente extends StatelessWidget {
     for (var device in medicaoData!.devices!) {
       // Verificar se há registros de consumo
       if (device.registrosConsumo != null) {
-        List<MedicaoAmbienteGrafico> dados = device.registrosConsumo!.map((registro) {
+        List<MedicaoAmbienteGrafico> dados =
+            device.registrosConsumo!.map((registro) {
           return MedicaoAmbienteGrafico(
             hora: DateTime.parse(registro.hora!),
             potenciaAtivaKw: registro.potenciaAtivaKw!,
@@ -34,7 +36,8 @@ class LineChartConsumoAmbiente extends StatelessWidget {
           name: device.nome, // Nome do dispositivo como legenda
           dataSource: dados,
           xValueMapper: (MedicaoAmbienteGrafico medicao, _) => medicao.hora,
-          yValueMapper: (MedicaoAmbienteGrafico medicao, _) => medicao.potenciaAtivaKw,
+          yValueMapper: (MedicaoAmbienteGrafico medicao, _) =>
+              medicao.potenciaAtivaKw,
         ));
       }
     }
@@ -54,7 +57,6 @@ class LineChartConsumoAmbiente extends StatelessWidget {
   }
 }
 
-// Modelo de dados para a medição do ambiente
 class MedicaoAmbienteGrafico {
   final DateTime hora;
   final double potenciaAtivaKw;
