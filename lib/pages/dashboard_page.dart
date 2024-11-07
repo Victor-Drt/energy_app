@@ -2,10 +2,7 @@ import 'package:energy_app/models/ambiente.dart';
 import 'package:energy_app/models/indicadorDashboard.dart';
 import 'package:energy_app/services/ambiente_service.dart';
 import 'package:energy_app/services/medicao_service.dart';
-import 'package:energy_app/widgets/graphs/grafico_barra.dart';
 import 'package:energy_app/widgets/graphs/grafico_barra_dashboard.dart';
-import 'package:energy_app/widgets/graphs/grafico_linha_dashboard.dart';
-import 'package:energy_app/widgets/graphs/grafico_pizza.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -21,7 +18,7 @@ class _PageDashboardState extends State<PageDashboard> {
   final medicaoService = MedicaoService();
 
   List<Ambiente> itensAmbiente = [];
-  late IndicadorDashboard indicadorConsumo;
+  IndicadorDashboard? indicadorConsumo;
 
   bool isLoading = true;
 
@@ -103,7 +100,7 @@ class _PageDashboardState extends State<PageDashboard> {
                   "Hoje",
                   style: TextStyle(fontFamily: "Roboto", fontSize: 24),
                 ),
-                Text("${indicadorConsumo.consumoDiario?.toStringAsPrecision(5)} kW",
+                Text("${indicadorConsumo?.consumoDiario?.toStringAsPrecision(5)} kW",
                     style: TextStyle(
                         fontFamily: "Roboto",
                         fontSize: 24,
@@ -112,32 +109,25 @@ class _PageDashboardState extends State<PageDashboard> {
                   "Semana",
                   style: TextStyle(fontFamily: "Roboto", fontSize: 24),
                 ),
-                Text("${indicadorConsumo.consumoMensal?.toStringAsPrecision(5)} kW",
+                Text("${indicadorConsumo?.consumoMensal?.toStringAsPrecision(5)} kW",
                     style: TextStyle(
                         fontFamily: "Roboto",
                         fontSize: 24,
                         fontWeight: FontWeight.bold)),
                 Text("Mês",
                     style: TextStyle(fontFamily: "Roboto", fontSize: 24)),
-                Text("${indicadorConsumo.consumoMensal?.toStringAsPrecision(5)} kW",
+                Text("${indicadorConsumo?.consumoMensal?.toStringAsPrecision(5)} kW",
                     style: TextStyle(
                         fontFamily: "Roboto",
                         fontSize: 24,
                         fontWeight: FontWeight.bold)),
               ],
             ),
-            SizedBox(
+            Image.asset(
+              'assets/images/graficos.png',
               width: 124,
               height: 124,
-              child: Container(
-                color: Colors.red,
-              ),
             )
-            // Image.asset(
-            //   'images/graficos.png',
-            //   width: 124,
-            //   height: 124,
-            // )
           ]));
     }
 
@@ -208,8 +198,8 @@ class _PageDashboardState extends State<PageDashboard> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    cardMediaTensao("Tensão Média (V)", "${indicadorConsumo.tensaoMedia}"),
-                    cardMediaTensao("Ambientes", "${indicadorConsumo.quantidadeAmbientes}")
+                    cardMediaTensao("Tensão Média (V)", "${indicadorConsumo?.tensaoMedia?.toStringAsPrecision(4)}"),
+                    cardMediaTensao("Ambientes", "${indicadorConsumo?.quantidadeAmbientes}")
                   ],
                 ),
                 graphBloco

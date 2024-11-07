@@ -24,12 +24,12 @@ class Qualidade {
     id = json['id'];
     timestamp = json['timestamp'];
     usuarioId = json['usuarioId'];
-    fatorPotencia = json['fatorPotencia'];
-    flutuacaoTensaoMinima = json['flutuacaoTensaoMinima'];
-    flutuacaoTensaoMaxima = json['flutuacaoTensaoMaxima'];
-    thdTensao = json['thdTensao'];
-    thdCorrente = json['thdCorrente'];
-    oscilacaoTensao = json['oscilacaoTensao'];
+    fatorPotencia = (json['fatorPotencia'] as num?)?.toDouble();
+    flutuacaoTensaoMinima = (json['flutuacaoTensaoMinima'] as num?)?.toDouble();
+    flutuacaoTensaoMaxima = (json['flutuacaoTensaoMaxima'] as num?)?.toDouble();
+    thdTensao = (json['thdTensao'] as num?)?.toDouble();
+    thdCorrente = (json['thdCorrente'] as num?)?.toDouble();
+    oscilacaoTensao = (json['oscilacaoTensao'] as num?)?.toDouble();
   }
 
   Map<String, dynamic> toJson() {
