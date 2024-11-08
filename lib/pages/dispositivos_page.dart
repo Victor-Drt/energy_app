@@ -1,7 +1,5 @@
-import 'package:energy_app/models/bloco.dart';
 import 'package:energy_app/models/dispositivo.dart';
 import 'package:energy_app/pages/historico_page.dart';
-import 'package:energy_app/services/bloco_service.dart';
 import 'package:energy_app/services/dispositivo_service.dart';
 import 'package:energy_app/widgets/messages/error_conection.dart';
 import 'package:energy_app/widgets/itens/item_dispositivo.dart';
@@ -19,7 +17,6 @@ class DispositivosPage extends StatefulWidget {
 class _DispositivosPageState extends State<DispositivosPage> {
   late Future<List<Dispositivo>> _dispositivosData;
   List<Dispositivo> itensDispositivo = [];
-  List<Bloco> blocos = [];
   List<Dispositivo> itensDispositivoFiltrado = [];
   String? dropdownValue;
   bool isLoading = true;

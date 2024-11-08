@@ -1,5 +1,6 @@
 import 'package:energy_app/pages/home_page.dart';
 import 'package:energy_app/pages/login_page.dart';
+import 'package:energy_app/pages/start_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -20,8 +21,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      // home: const MyHomePage(title: 'Dashboard'),
-      home: LoginPage(),
+      home: TelaInicial(),
+      // home: LoginPage(),
     );
   }
 }

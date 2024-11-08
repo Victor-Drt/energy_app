@@ -5,17 +5,46 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../models/medicao.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:html' as html; // Importação para usar o localStorage no Flutter Web.
 
 class MedicaoService {
   final String baseUrl;
-  final _storage =
-      const FlutterSecureStorage(); // Armazenamento seguro do token
+  final _storage = const FlutterSecureStorage(); // Armazenamento seguro do token
 
   MedicaoService({String? baseUrl})
       : baseUrl = baseUrl ?? dotenv.env["api"] ?? "";
 
+  // Verifica se é possível usar o FlutterSecureStorage, senão tenta o localStorage no ambiente web
   Future<String?> _getToken() async {
-    return await _storage.read(key: 'bearerToken');
+    String? token;
+
+    try {
+      // Tenta obter o token do FlutterSecureStorage
+      token = await _storage.read(key: 'bearerToken');
+    } catch (e) {
+      print('Erro ao usar FlutterSecureStorage: $e');
+    }
+
+    // Se falhar em obter o token do FlutterSecureStorage, tenta o localStorage (apenas no Flutter Web)
+    if (token == null && isWeb()) {
+      try {
+        // Tenta acessar o localStorage no ambiente Web
+        token = html.window.localStorage['bearerToken'];
+      } catch (e) {
+        print('Erro ao usar localStorage: $e');
+      }
+    }
+
+    return token;
+  }
+
+  // Verifica se a plataforma é Web (flutter web)
+  bool isWeb() {
+    try {
+      return identical(0, 0.0); // Se estivermos no Flutter Web, isso retorna true
+    } catch (e) {
+      return false;
+    }
   }
 
   // Método para listar medições de um dispositivo específico em um determinado período
@@ -23,6 +52,10 @@ class MedicaoService {
       {required macAddress, required startDate, required endDate}) async {
     try {
       final token = await _getToken();
+
+      if (token == null) {
+        throw Exception('Token de autenticação não encontrado!');
+      }
 
       final response = await http.get(
         Uri.parse(
@@ -51,10 +84,12 @@ class MedicaoService {
     required endDate,
   }) async {
     try {
-      // Obtém o token de autenticação
       final token = await _getToken();
 
-      // Realiza a requisição GET para o endpoint da API
+      if (token == null) {
+        throw Exception('Token de autenticação não encontrado!');
+      }
+
       final response = await http.get(
         Uri.parse(
           '$baseUrl/medicoes/ambiente/$ambienteId?startDate=${startDate.toIso8601String()}&endDate=${endDate.toIso8601String()}',
@@ -87,6 +122,10 @@ class MedicaoService {
   Future<IndicadorDashboard?> obterEstatisticas({required startDate, required endDate}) async {
     try {
       final token = await _getToken();
+
+      if (token == null) {
+        throw Exception('Token de autenticação não encontrado!');
+      }
 
       final response = await http.get(
         Uri.parse(

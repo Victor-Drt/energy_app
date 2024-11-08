@@ -16,8 +16,9 @@ class DispositivoService {
     return await _storage.read(key: 'bearerToken');
   }
 
+  // Método para buscar dispositivos de um ambiente específico
   Future<List<Dispositivo>> fetchDispositivo(String? ambienteId) async {
-    final url = Uri.parse('${baseUrl}/dispositivos/${ambienteId}');
+    final url = Uri.parse('${baseUrl}/dispositivos/$ambienteId');
     final token = await _getToken();
 
     try {
@@ -29,6 +30,7 @@ class DispositivoService {
         },
       );
 
+      // Verifica o status da resposta
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         return List<Dispositivo>.from(
@@ -44,7 +46,7 @@ class DispositivoService {
       return []; // Retorna uma lista vazia ou trate conforme necessário
     } catch (e) {
       print('Erro inesperado: $e');
-      return [];
+      return []; // Retorna uma lista vazia em caso de erro
     }
   }
 
@@ -52,25 +54,29 @@ class DispositivoService {
   Future<Dispositivo?> cadastrarDispositivo(Dispositivo dispositivo) async {
     final token = await _getToken();
 
-    final response = await http.post(
-      Uri.parse('$baseUrl/dispositivos/'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Inclui o token JWT
-      },
-      body: jsonEncode({
-        "ambienteId": dispositivo.ambienteId,
-        "descricao": dispositivo.descricao,
-        "macAddress": dispositivo.macAddress
-      }),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/dispositivos/'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // Inclui o token JWT
+        },
+        body: jsonEncode({
+          "ambienteId": dispositivo.ambienteId,
+          "descricao": dispositivo.descricao,
+          "macAddress": dispositivo.macAddress
+        }),
+      );
 
-    if (response.statusCode == 201) {
-      return Dispositivo.fromJson(jsonDecode(response.body));
-    } else {
-      print('Erro ao cadastrar ambiente: ${response.statusCode}');
-      return null;
+      // Verifica o status da resposta
+      if (response.statusCode == 201) {
+        return Dispositivo.fromJson(jsonDecode(response.body));
+      } else {
+        throw Exception('Erro ao cadastrar dispositivo: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Erro inesperado: $e');
+      return null; // Retorna null em caso de erro
     }
   }
-
 }

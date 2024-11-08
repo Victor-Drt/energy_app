@@ -3,6 +3,8 @@ import 'package:energy_app/services/usuario_service.dart'; // Certifique-se de i
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart'; // Importa a biblioteca jwt_decoder
+import 'dart:html'
+    as html; // Importa o pacote para acesso ao localStorage na web
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,29 +19,39 @@ class _LoginPageState extends State<LoginPage> {
 
   String? _errorMessage; // Mensagem de erro
   bool _isLoading = false; // Para indicar o carregamento
-  final storage = const FlutterSecureStorage(); // Instância para armazenamento seguro
+  final storage =
+      const FlutterSecureStorage(); // Instância para armazenamento seguro
 
   final UsuarioService usuarioService = UsuarioService(); // Defina sua URL base
 
-  @override
-  void initState() {
-    super.initState();
-    _checkToken(); // Verifica o token ao iniciar a página
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // _checkToken(); // Verifica o token ao iniciar a página
+  // }
 
-  Future<void> _checkToken() async {
-    String? token = await storage.read(key: 'bearerToken');
-    
-    if (token != null && !JwtDecoder.isExpired(token)) {
-      // Se o token é válido e não expirou, navegue para a página inicial
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MyHomePage(title: "Dashboard"),
-        ),
-      );
-    }
-  }
+  // Future<void> _checkToken() async {
+  //   String? token;
+
+  //   // Verifica se a plataforma é web ou não
+  //   if (html.window.localStorage.containsKey('bearerToken')) {
+  //     // Se for web, busca o token no localStorage
+  //     token = html.window.localStorage['bearerToken'];
+  //     print("AQUUIII> $token");
+  //   } else {
+  //     // Se for dispositivo móvel, usa o FlutterSecureStorage
+  //     token = await storage.read(key: 'bearerToken');
+  //   }
+
+  //   if (token != null && !JwtDecoder.isExpired(token)) {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => MyHomePage(title: "Dashboard"),
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -99,10 +111,18 @@ class _LoginPageState extends State<LoginPage> {
     String? token = await usuarioService.login(email, senha);
 
     if (token != null) {
-
       setState(() {
         _isLoading = false; // Para o carregamento antes de iniciar a navegação
       });
+
+      // Armazena o token dependendo da plataforma
+      if (html.window.localStorage.containsKey('bearerToken')) {
+        // Se for web, usa localStorage
+        html.window.localStorage['bearerToken'] = token;
+      } else {
+        // Se for dispositivo móvel, usa FlutterSecureStorage
+        await storage.write(key: 'bearerToken', value: token);
+      }
 
       // Use um Future.delayed para garantir que o estado do widget se estabilize antes de navegar
       await Future.delayed(Duration.zero, () {
