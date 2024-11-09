@@ -1,9 +1,11 @@
 import 'package:energy_app/pages/ambientes_page.dart';
 import 'package:energy_app/pages/comparativo_page.dart';
 import 'package:energy_app/pages/dashboard_page.dart';
-import 'package:energy_app/pages/dispositivos_page.dart';
 import 'package:energy_app/pages/qualidade_page.dart';
+import 'package:energy_app/pages/start_page.dart';
+import 'package:energy_app/services/usuario_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MyHomePage extends StatefulWidget {
   final String title;
@@ -19,6 +21,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Color corPrincipal = Colors.white;
+  final storage =
+      const FlutterSecureStorage(); // Instância para armazenamento seguro
 
   int _selectedIndex = 0;
   String appBarTitle = "Dashboard";
@@ -48,7 +52,13 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(114, 187, 57, 1),
-        title: Text(appBarTitle, style: TextStyle(color: Colors.white),),
+        title: Text(
+          appBarTitle,
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.exit_to_app))
+        ],
         leading: isWideScreen
             ? Builder(
                 builder: (context) {
@@ -78,12 +88,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     _onItemTapped(0);
                   },
                 ),
-                                ListTile(
+                ListTile(
                   title: const Row(
-                    children: [
-                      Icon(Icons.roofing),
-                      Text("Ambientes")
-                    ],
+                    children: [Icon(Icons.roofing), Text("Ambientes")],
                   ),
                   onTap: () {
                     Navigator.pop(context);
@@ -111,6 +118,21 @@ class _MyHomePageState extends State<MyHomePage> {
                     _onItemTapped(3);
                   },
                 ),
+                ListTile(
+                  title: const Row(
+                    children: [Icon(Icons.logout), Text("Sair")],
+                  ),
+                  onTap: () async {
+                    final UsuarioService usuarioService = UsuarioService();
+                    await usuarioService.logout().then((onValue) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TelaInicial(),
+                          ));
+                    });
+                  },
+                ),
               ],
             ))
           : null,
@@ -119,33 +141,35 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       bottomNavigationBar: isWideScreen
           ? null
-          : Theme(data: Theme.of(context).copyWith(
-            canvasColor: Color.fromRGBO(114, 187, 57, 1),
-            primaryColor: Colors.white,
-          ), child: BottomNavigationBar(
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.bar_chart_outlined),
-                  label: 'Dashboard',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.roofing),
-                  label: 'Ambientes',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.energy_savings_leaf_outlined),
-                  label: 'Qualidade',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.compare_arrows),
-                  label: 'Comparativo',
-                ),
-              ],
-              currentIndex: _selectedIndex,
-              selectedItemColor: corPrincipal,
-              unselectedItemColor: Colors.white,
-              onTap: _onItemTapped,
-            )),
+          : Theme(
+              data: Theme.of(context).copyWith(
+                canvasColor: Color.fromRGBO(114, 187, 57, 1),
+                primaryColor: Colors.white,
+              ),
+              child: BottomNavigationBar(
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.bar_chart_outlined),
+                    label: 'Dashboard',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.roofing),
+                    label: 'Ambientes',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.energy_savings_leaf_outlined),
+                    label: 'Qualidade',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.compare_arrows),
+                    label: 'Comparativo',
+                  ),
+                ],
+                currentIndex: _selectedIndex,
+                selectedItemColor: corPrincipal,
+                unselectedItemColor: Colors.white,
+                onTap: _onItemTapped,
+              )),
     );
   }
 }

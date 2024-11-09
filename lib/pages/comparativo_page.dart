@@ -9,8 +9,6 @@ import 'package:energy_app/widgets/graphs/comparativo/grafico_linha_consumo.dart
 import 'package:energy_app/widgets/graphs/comparativo/grafico_linha_fatorpt.dart';
 import 'package:energy_app/widgets/graphs/comparativo/grafico_linha_tensao.dart';
 import 'package:energy_app/widgets/graphs/comparativo/grafico_linhaptreativa.dart';
-import 'package:energy_app/widgets/graphs/grafico_barra.dart';
-import 'package:energy_app/widgets/graphs/grafico_pizza.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

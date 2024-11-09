@@ -1,7 +1,6 @@
 import 'package:energy_app/models/ambiente.dart';
 import 'package:energy_app/pages/consumo_page.dart';
 import 'package:energy_app/pages/dispositivos_page.dart';
-import 'package:energy_app/pages/historico_page.dart';
 import 'package:energy_app/services/ambiente_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -140,11 +139,11 @@ class _AmbientesPageState extends State<AmbientesPage> {
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 1,
                         blurRadius: 7,
-                        offset: Offset(0, 3), // changes position of shadow
+                        offset: const Offset(0, 3), // changes position of shadow
                       ),
                     ],
-                    color: Color.fromRGBO(104, 192, 41, 1),
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                    color: const Color.fromRGBO(104, 192, 41, 1),
+                    borderRadius: const BorderRadius.all(Radius.circular(20))),
                 child: GestureDetector(
                   onTap: () => Navigator.push(
                     context,
@@ -155,13 +154,13 @@ class _AmbientesPageState extends State<AmbientesPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Consumido",
+                      const Text("Consumido",
                           style: TextStyle(
                               fontFamily: "Roboto",
                               fontSize: 24,
                               color: Colors.white)),
                       Text("${ambiente.consumoAcumuladokWh}kW",
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontFamily: "Roboto",
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -170,7 +169,7 @@ class _AmbientesPageState extends State<AmbientesPage> {
                     ],
                   ),
                 )),
-            SizedBox(
+            const SizedBox(
               width: 30,
             ),
             Container(
@@ -184,11 +183,11 @@ class _AmbientesPageState extends State<AmbientesPage> {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 1,
                       blurRadius: 7,
-                      offset: Offset(0, 3), // changes position of shadow
+                      offset: const Offset(0, 3), // changes position of shadow
                     ),
                   ],
-                  color: Color.fromRGBO(104, 192, 41, 1),
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
+                  color: const Color.fromRGBO(104, 192, 41, 1),
+                  borderRadius: const BorderRadius.all(Radius.circular(20))),
               child: GestureDetector(
                   onTap: () => Navigator.push(
                         context,
@@ -203,18 +202,18 @@ class _AmbientesPageState extends State<AmbientesPage> {
                       height: 120,
                       margin: const EdgeInsets.fromLTRB(0, 12, 0, 12),
                       padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(20))),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Dispositivos",
+                          const Text("Dispositivos",
                               style: TextStyle(
                                   fontFamily: "Roboto",
                                   fontSize: 20,
                                   color: Colors.white)),
                           Text("${ambiente.qtdDispositivos}",
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontFamily: "Roboto",
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,

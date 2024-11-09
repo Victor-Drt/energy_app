@@ -1,3 +1,4 @@
+import 'package:energy_app/pages/cadastro_page.dart';
 import 'package:energy_app/pages/home_page.dart';
 import 'package:energy_app/pages/login_page.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +73,11 @@ class _TelaInicialState extends State<TelaInicial> {
                   ),
                 ),
                 onPressed: () {
-                  print('Entrar pressionado');
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TelaCadastro(),
+                      ));
                 },
                 child: Text(
                   'Cadastre-se',
@@ -95,7 +100,7 @@ class _TelaInicialState extends State<TelaInicial> {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.pushReplacement(
+                  Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => LoginPage(),

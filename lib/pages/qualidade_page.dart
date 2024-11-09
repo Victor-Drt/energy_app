@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:energy_app/widgets/itens/Qualidadecard.dart';
 import 'package:energy_app/services/qualidade_service.dart';
 import 'package:energy_app/models/qualidade.dart';
-import 'package:intl/intl.dart';
 
 class QualidadePage extends StatefulWidget {
   @override
@@ -86,13 +85,10 @@ class _QualidadePageState extends State<QualidadePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Análise de Qualidade de Energia'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Botão para gerar uma nova análise
             ElevatedButton(

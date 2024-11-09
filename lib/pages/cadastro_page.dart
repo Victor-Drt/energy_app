@@ -1,64 +1,35 @@
+import 'package:energy_app/models/usuario.dart';
 import 'package:energy_app/pages/home_page.dart';
-import 'package:energy_app/services/usuario_service.dart'; // Certifique-se de importar o serviço
+import 'package:energy_app/services/usuario_service.dart';
 import 'package:flutter/material.dart';
+import 'dart:html' as html;
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:html'
-    as html; // Importa o pacote para acesso ao localStorage na web
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
+class TelaCadastro extends StatefulWidget {
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<TelaCadastro> createState() => _TelaCadastroState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _TelaCadastroState extends State<TelaCadastro> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
+  final TextEditingController _senhaConfirmController = TextEditingController();
 
-  String? _errorMessage; // Mensagem de erro
-  bool _isLoading = false; // Para indicar o carregamento
   bool isObscure1 = true;
   bool isObscure2 = true;
+  bool _isLoading = false;
 
-  final storage =
-      const FlutterSecureStorage(); // Instância para armazenamento seguro
-
-  final UsuarioService usuarioService = UsuarioService(); // Defina sua URL base
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // _checkToken(); // Verifica o token ao iniciar a página
-  // }
-
-  // Future<void> _checkToken() async {
-  //   String? token;
-
-  //   // Verifica se a plataforma é web ou não
-  //   if (html.window.localStorage.containsKey('bearerToken')) {
-  //     // Se for web, busca o token no localStorage
-  //     token = html.window.localStorage['bearerToken'];
-  //     print("AQUUIII> $token");
-  //   } else {
-  //     // Se for dispositivo móvel, usa o FlutterSecureStorage
-  //     token = await storage.read(key: 'bearerToken');
-  //   }
-
-  //   if (token != null && !JwtDecoder.isExpired(token)) {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => MyHomePage(title: "Dashboard"),
-  //       ),
-  //     );
-  //   }
-  // }
+  String? _errorMessage;
+  final UsuarioService usuarioService = UsuarioService();
+  final storage = const FlutterSecureStorage();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        // title: Text('Análise de Qualidade de Energia'),
+      ),
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
@@ -66,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             const SizedBox(height: 40),
             const Text(
-              'Bem Vindo de Volta!',
+              'Registre-se para\nMonitorar seu\nconsumo em\ntempo Real',
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 40,
@@ -127,6 +98,38 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     style: TextStyle(color: Colors.black),
                   ),
+                  const SizedBox(height: 15),
+                  TextField(
+                    controller: _senhaConfirmController,
+                    obscureText: isObscure2,
+                    onChanged: (value) {
+                      setState(() {
+                        value.isEmpty || value != _senhaController.text
+                            ? _errorMessage = "Senhas não conferem"
+                            : _errorMessage = null;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Confirmar senha',
+                      errorText: _errorMessage,
+                      suffixIcon: IconButton(
+                        icon: isObscure2
+                            ? Icon(Icons.remove_red_eye_outlined)
+                            : Icon(Icons.remove_red_eye),
+                        onPressed: () {
+                          setState(() {
+                            isObscure2 = !isObscure2;
+                          });
+                        },
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    style: TextStyle(color: Colors.black),
+                  ),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -139,9 +142,9 @@ class _LoginPageState extends State<LoginPage> {
                         vertical: 15,
                       ),
                     ),
-                    onPressed: _isLoading ? null : _login,
+                    onPressed: _isLoading ? null : _register,
                     child: const Text(
-                      'Entrar',
+                      'Cadastrar',
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
@@ -154,9 +157,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> _login() async {
+  Future<void> _register() async {
     setState(() {
-      _errorMessage = null; // Limpa a mensagem de erro anterior
+      _errorMessage = null;
       _isLoading = true; // Inicia o carregamento
     });
 
@@ -164,37 +167,41 @@ class _LoginPageState extends State<LoginPage> {
     final String senha = _senhaController.text;
 
     // Tenta fazer o login
-    String? token = await usuarioService.login(email, senha);
+    Usuario? user = await usuarioService.register(email, senha);
 
-    if (token != null) {
+    if (user != null) {
       setState(() {
         _isLoading = false; // Para o carregamento antes de iniciar a navegação
       });
 
-      // Armazena o token dependendo da plataforma
-      if (html.window.localStorage.containsKey('bearerToken')) {
-        // Se for web, usa localStorage
-        html.window.localStorage['bearerToken'] = token;
-      } else {
-        // Se for dispositivo móvel, usa FlutterSecureStorage
-        await storage.write(key: 'bearerToken', value: token);
-      }
+      String? token = await usuarioService.login(email, senha);
 
-      // Use um Future.delayed para garantir que o estado do widget se estabilize antes de navegar
-      await Future.delayed(Duration.zero, () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyHomePage(title: "Dashboard"),
-          ),
-        );
-      });
-    } else {
-      // Se falhar, exiba uma mensagem de erro
-      setState(() {
-        _errorMessage = 'E-mail ou senha incorretos.'; // Mensagem de erro
-        _isLoading = false; // Para o carregamento
-      });
+      if (token != null) {
+        setState(() {
+          _isLoading =
+              false; // Para o carregamento antes de iniciar a navegação
+        });
+
+        if (html.window.localStorage.containsKey('bearerToken')) {
+          html.window.localStorage['bearerToken'] = token;
+        } else {
+          await storage.write(key: 'bearerToken', value: token);
+        }
+
+        await Future.delayed(Duration.zero, () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MyHomePage(title: "Dashboard"),
+            ),
+          );
+        });
+      } else {
+        setState(() {
+          _errorMessage = 'E-mail ou senha incorretos.'; // Mensagem de erro
+          _isLoading = false; // Para o carregamento
+        });
+      }
     }
   }
 }
