@@ -1,54 +1,22 @@
 import 'dart:convert';
 import 'package:energy_app/models/qualidade.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:energy_app/services/auth/token_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:html' as html; // Para acessar o localStorage na web
 
 class QualidadeService {
   final String baseUrl;
-  final _storage = const FlutterSecureStorage(); // Armazenamento seguro do token
+  final TokenService _tokenService = getTokenService();
 
   QualidadeService({String? baseUrl})
       : baseUrl = baseUrl ?? dotenv.env["api"] ?? "";
-
-  // Verifica se é possível usar o FlutterSecureStorage, senão tenta o localStorage no ambiente web
-  Future<String?> _getToken() async {
-    String? token;
-
-    try {
-      token = await _storage.read(key: 'bearerToken');
-    } catch (e) {
-      print('Erro ao usar FlutterSecureStorage: $e');
-    }
-
-    // Se falhar em obter o token do FlutterSecureStorage, tenta o localStorage (apenas no Flutter Web)
-    if (token == null && isWeb()) {
-      try {
-        token = html.window.localStorage['bearerToken'];
-      } catch (e) {
-        print('Erro ao usar localStorage: $e');
-      }
-    }
-
-    return token;
-  }
-
-  // Verifica se a plataforma é Web (flutter web)
-  bool isWeb() {
-    try {
-      return identical(0, 0.0); // Se estivermos no Flutter Web, isso retorna true
-    } catch (e) {
-      return false;
-    }
-  }
 
   // Método para gerar análise de qualidade no período fornecido
   Future<Qualidade?> gerarAnaliseQualidade({
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    final token = await _getToken();
+    final token = await _tokenService.getToken();
 
     if (token == null) {
       throw Exception('Token de autenticação não encontrado!');
@@ -79,7 +47,7 @@ class QualidadeService {
   // Método para listar o histórico de análises de qualidade
   Future<List<Qualidade>?> listarHistoricoAnalises() async {
     try {
-      final token = await _getToken();
+      final token = await _tokenService.getToken();
 
       if (token == null) {
         throw Exception('Token de autenticação não encontrado!');
@@ -105,27 +73,13 @@ class QualidadeService {
     }
   }
 
-  // Método para salvar o token usando FlutterSecureStorage ou localStorage (em web)
+  // Método para salvar o token
   Future<void> salvarToken(String token) async {
-    try {
-      await _storage.write(key: 'bearerToken', value: token);
-    } catch (e) {
-      print('Erro ao salvar token com FlutterSecureStorage, tentando localStorage...');
-      if (isWeb()) {
-        html.window.localStorage['bearerToken'] = token;
-      }
-    }
+    await _tokenService.storeToken(token);
   }
 
-  // Método para remover o token (logout) usando FlutterSecureStorage ou localStorage (em web)
+  // Método para remover o token (logout)
   Future<void> removerToken() async {
-    try {
-      await _storage.delete(key: 'bearerToken');
-    } catch (e) {
-      print('Erro ao remover token com FlutterSecureStorage, tentando localStorage...');
-      if (isWeb()) {
-        html.window.localStorage.remove('bearerToken');
-      }
-    }
+    await _tokenService.removeToken();
   }
 }

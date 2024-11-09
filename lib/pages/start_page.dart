@@ -2,7 +2,7 @@ import 'package:energy_app/pages/cadastro_page.dart';
 import 'package:energy_app/pages/home_page.dart';
 import 'package:energy_app/pages/login_page.dart';
 import 'package:flutter/material.dart';
-import 'dart:html' as html;
+import 'package:universal_html/html.dart' as html;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
@@ -28,7 +28,6 @@ class _TelaInicialState extends State<TelaInicial> {
     if (html.window.localStorage.containsKey('bearerToken')) {
       // Se for web, busca o token no localStorage
       token = html.window.localStorage['bearerToken'];
-      print("AQUUIII> $token");
     } else {
       // Se for dispositivo móvel, usa o FlutterSecureStorage
       token = await storage.read(key: 'bearerToken');

@@ -57,7 +57,14 @@ class _MyHomePageState extends State<MyHomePage> {
           style: TextStyle(color: Colors.white),
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.exit_to_app))
+          IconButton(
+            onPressed: _logout,
+            icon: const Icon(
+              Icons.exit_to_app,
+              color: Colors.white,
+            ),
+            tooltip: "Sair",
+          )
         ],
         leading: isWideScreen
             ? Builder(
@@ -119,20 +126,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                 ),
                 ListTile(
-                  title: const Row(
-                    children: [Icon(Icons.logout), Text("Sair")],
-                  ),
-                  onTap: () async {
-                    final UsuarioService usuarioService = UsuarioService();
-                    await usuarioService.logout().then((onValue) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TelaInicial(),
-                          ));
-                    });
-                  },
-                ),
+                    title: const Row(
+                      children: [Icon(Icons.logout), Text("Sair")],
+                    ),
+                    onTap: _logout),
               ],
             ))
           : null,
@@ -171,5 +168,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 onTap: _onItemTapped,
               )),
     );
+  }
+
+  void _logout() async {
+    final UsuarioService usuarioService = UsuarioService();
+    await usuarioService.logout().then((onValue) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TelaInicial(),
+          ));
+    });
   }
 }

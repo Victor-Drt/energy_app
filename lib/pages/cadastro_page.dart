@@ -2,7 +2,7 @@ import 'package:energy_app/models/usuario.dart';
 import 'package:energy_app/pages/home_page.dart';
 import 'package:energy_app/services/usuario_service.dart';
 import 'package:flutter/material.dart';
-import 'dart:html' as html;
+import 'package:universal_html/html.dart' as html;
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 

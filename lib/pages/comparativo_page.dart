@@ -1,5 +1,3 @@
-// ignore_for_file: unused_local_variable
-
 import 'package:energy_app/models/byhora/consumo_hora.dart';
 import 'package:energy_app/models/byhora/fatorpotencia_hora.dart';
 import 'package:energy_app/models/byhora/potenciareativa_hora.dart';

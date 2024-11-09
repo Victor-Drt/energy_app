@@ -47,6 +47,7 @@ dependencies:
   jwt_decoder: ^2.0.1
   flutter_masked_text2: ^0.9.1
   syncfusion_flutter_charts: ^27.1.58
+  universal_html: ^2.2.4
 
 dev_dependencies:
   flutter_test:

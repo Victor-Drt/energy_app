@@ -2,8 +2,7 @@ import 'package:energy_app/pages/home_page.dart';
 import 'package:energy_app/services/usuario_service.dart'; // Certifique-se de importar o serviço
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:html'
-    as html; // Importa o pacote para acesso ao localStorage na web
+import 'package:universal_html/html.dart' as html;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -24,36 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   final storage =
       const FlutterSecureStorage(); // Instância para armazenamento seguro
 
-  final UsuarioService usuarioService = UsuarioService(); // Defina sua URL base
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // _checkToken(); // Verifica o token ao iniciar a página
-  // }
-
-  // Future<void> _checkToken() async {
-  //   String? token;
-
-  //   // Verifica se a plataforma é web ou não
-  //   if (html.window.localStorage.containsKey('bearerToken')) {
-  //     // Se for web, busca o token no localStorage
-  //     token = html.window.localStorage['bearerToken'];
-  //     print("AQUUIII> $token");
-  //   } else {
-  //     // Se for dispositivo móvel, usa o FlutterSecureStorage
-  //     token = await storage.read(key: 'bearerToken');
-  //   }
-
-  //   if (token != null && !JwtDecoder.isExpired(token)) {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => MyHomePage(title: "Dashboard"),
-  //       ),
-  //     );
-  //   }
-  // }
+  final UsuarioService usuarioService = UsuarioService();
 
   @override
   Widget build(BuildContext context) {
